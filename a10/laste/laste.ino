@@ -1,5 +1,5 @@
 /*******************************
-LASTE Control Panel ans Throttle panel
+LASTE Control Panel ans Throttle panel (24 bouttons)
   LASTE Control Panel
     EAC: Switch 2 positions (ON/OFF)
     Radar Altimeter: Switch 2 positions (NRM/DIS)
@@ -14,7 +14,6 @@ LASTE Control Panel ans Throttle panel
     Engine fluel flow R: switch 2 positions (NORM/OVERRIDE)
     Flaps: switch 3 positions (UP/MVR/DN)
 *******************************/
-
 
 #include "PushButton.h"
 #include "AutoReleaseSwitch.h"
@@ -71,7 +70,7 @@ byte BUTTON_INDEX[24][2] = {
   {0, 6}, // BTN_IDX_AUTOPILOT_ALTHDG
   {0, 7}, // BTN_IDX_AUTOPILOT_ALT
   //// Throttle panel
-  {1, 0}, // BTN_IDX_LANDING_GEAR_WARN
+  {1, 0}, // BTN_IDX_LANDING_GEAR_WARN (test 4, 5)
   {1, 1}, // BTN_IDX_APU_START
   {1, 2}, // BTN_IDX_APU_OFF
   {1, 3}, // BTN_IDX_ENG_OPER_L_IGN
@@ -142,49 +141,49 @@ void loop() {
   currentMillis = millis();
 
   //////// LASTE Panel
-  static AutoReleaseSwitch eacSwitch(bitRead(PINB, PINB0), I2C_DATA, BUTTON_INDEX[BTN_IDX_EAC_ON], BUTTON_INDEX[BTN_IDX_EAC_OFF]);
-  eacSwitch.run(bitRead(PINB, PINB0), &currentMillis);
+  static AutoReleaseSwitch eacSwitch(bitRead(PINB, PINB0), I2C_DATA, BUTTON_INDEX[BTN_IDX_EAC_ON]);
+  eacSwitch.run(bitRead(PINB, PINB0), &currentMillis, BUTTON_INDEX[BTN_IDX_EAC_OFF]);
 
-  static AutoReleaseSwitch rdrSwitch(bitRead(PINB, PINB1), I2C_DATA, BUTTON_INDEX[BTN_IDX_RDR_ON], BUTTON_INDEX[BTN_IDX_RDR_OFF]);
-  rdrSwitch.run(bitRead(PINB, PINB1), &currentMillis);
+  static AutoReleaseSwitch rdrSwitch(bitRead(PINB, PINB1), I2C_DATA, BUTTON_INDEX[BTN_IDX_RDR_ON]);
+  rdrSwitch.run(bitRead(PINB, PINB1), &currentMillis, BUTTON_INDEX[BTN_IDX_RDR_OFF]);
 
   static PushButton autoPilotButton(I2C_DATA, BUTTON_INDEX[BTN_IDX_AUTOPILOT_ENGAGE]);
   autoPilotButton.run(bitRead(PINB, PINB2));
 
-  static AutoReleaseSwitch autoPilotPathSwitch(bitRead(PINB, PINB3), I2C_DATA, BUTTON_INDEX[BTN_IDX_AUTOPILOT_PATH], BUTTON_INDEX[BTN_IDX_AUTOPILOT_ALTHDG]);
-  autoPilotPathSwitch.run(bitRead(PINB, PINB3), &currentMillis);
+  static AutoReleaseSwitch autoPilotPathSwitch(bitRead(PINB, PINB3), I2C_DATA, BUTTON_INDEX[BTN_IDX_AUTOPILOT_PATH]);
+  autoPilotPathSwitch.run(bitRead(PINB, PINB3), &currentMillis, BUTTON_INDEX[BTN_IDX_AUTOPILOT_ALTHDG]);
 
-  static AutoReleaseSwitch autoPilotAltSwitch(bitRead(PINB, PINB4), I2C_DATA, BUTTON_INDEX[BTN_IDX_AUTOPILOT_ALT], BUTTON_INDEX[BTN_IDX_AUTOPILOT_ALTHDG]);
-  autoPilotAltSwitch.run(bitRead(PINB, PINB4), &currentMillis);
+  static AutoReleaseSwitch autoPilotAltSwitch(bitRead(PINB, PINB4), I2C_DATA, BUTTON_INDEX[BTN_IDX_AUTOPILOT_ALT]);
+  autoPilotAltSwitch.run(bitRead(PINB, PINB4), &currentMillis, BUTTON_INDEX[BTN_IDX_AUTOPILOT_ALTHDG]);
 
   //////// Throttle Panel
   static PushButton landingGearButton(I2C_DATA, BUTTON_INDEX[BTN_IDX_LANDING_GEAR_WARN]);
   landingGearButton.run(bitRead(PINB, PINB5));
 
-  static AutoReleaseSwitch apuStartSwitch(bitRead(PINC, PINC0), I2C_DATA, BUTTON_INDEX[BTN_IDX_APU_START], BUTTON_INDEX[BTN_IDX_APU_OFF]);
-  apuStartSwitch.run(bitRead(PINC, PINC0), &currentMillis);
+  static AutoReleaseSwitch apuStartSwitch(bitRead(PINC, PINC0), I2C_DATA, BUTTON_INDEX[BTN_IDX_APU_START]);
+  apuStartSwitch.run(bitRead(PINC, PINC0), &currentMillis, BUTTON_INDEX[BTN_IDX_APU_OFF]);
 
-  static AutoReleaseSwitch engOperLIgnSwitch(bitRead(PINC, PINC1), I2C_DATA, BUTTON_INDEX[BTN_IDX_ENG_OPER_L_IGN], BUTTON_INDEX[BTN_IDX_ENG_OPER_L_NORM]);
-  engOperLIgnSwitch.run(bitRead(PINC, PINC1), &currentMillis);
+  static AutoReleaseSwitch engOperLIgnSwitch(bitRead(PINC, PINC1), I2C_DATA, BUTTON_INDEX[BTN_IDX_ENG_OPER_L_IGN]);
+  engOperLIgnSwitch.run(bitRead(PINC, PINC1), &currentMillis, BUTTON_INDEX[BTN_IDX_ENG_OPER_L_NORM]);
 
-  static AutoReleaseSwitch engOperLMotorSwitch(bitRead(PINC, PINC2), I2C_DATA, BUTTON_INDEX[BTN_IDX_ENG_OPER_L_MOTOR], BUTTON_INDEX[BTN_IDX_ENG_OPER_L_NORM]);
-  engOperLMotorSwitch.run(bitRead(PINC, PINC2), &currentMillis);
+  static AutoReleaseSwitch engOperLMotorSwitch(bitRead(PINC, PINC2), I2C_DATA, BUTTON_INDEX[BTN_IDX_ENG_OPER_L_MOTOR]);
+  engOperLMotorSwitch.run(bitRead(PINC, PINC2), &currentMillis, BUTTON_INDEX[BTN_IDX_ENG_OPER_L_NORM]);
 
-  static AutoReleaseSwitch engOperRIgnSwitch(bitRead(PINC, PINC3), I2C_DATA, BUTTON_INDEX[BTN_IDX_ENG_OPER_R_IGN], BUTTON_INDEX[BTN_IDX_ENG_OPER_R_NORM]);
-  engOperRIgnSwitch.run(bitRead(PINC, PINC3), &currentMillis);
+  static AutoReleaseSwitch engOperRIgnSwitch(bitRead(PINC, PINC3), I2C_DATA, BUTTON_INDEX[BTN_IDX_ENG_OPER_R_IGN]);
+  engOperRIgnSwitch.run(bitRead(PINC, PINC3), &currentMillis, BUTTON_INDEX[BTN_IDX_ENG_OPER_R_NORM]);
 
-  static AutoReleaseSwitch engOperRMotorSwitch(bitRead(PIND, PIND2), I2C_DATA, BUTTON_INDEX[BTN_IDX_ENG_OPER_R_MOTOR], BUTTON_INDEX[BTN_IDX_ENG_OPER_R_NORM]);
-  engOperRMotorSwitch.run(bitRead(PIND, PIND2), &currentMillis);
+  static AutoReleaseSwitch engOperRMotorSwitch(bitRead(PIND, PIND2), I2C_DATA, BUTTON_INDEX[BTN_IDX_ENG_OPER_R_MOTOR]);
+  engOperRMotorSwitch.run(bitRead(PIND, PIND2), &currentMillis, BUTTON_INDEX[BTN_IDX_ENG_OPER_R_NORM]);
 
-  static AutoReleaseSwitch engFlowLSwitch(bitRead(PIND, PIND3), I2C_DATA, BUTTON_INDEX[BTN_IDX_ENG_FUEL_FLOW_L_NORM], BUTTON_INDEX[BTN_IDX_ENG_FUEL_FLOW_L_OVERRIDE]);
-  engFlowLSwitch.run(bitRead(PIND, PIND3), &currentMillis);
+  static AutoReleaseSwitch engFlowLSwitch(bitRead(PIND, PIND3), I2C_DATA, BUTTON_INDEX[BTN_IDX_ENG_FUEL_FLOW_L_NORM]);
+  engFlowLSwitch.run(bitRead(PIND, PIND3), &currentMillis, BUTTON_INDEX[BTN_IDX_ENG_FUEL_FLOW_L_OVERRIDE]);
 
-  static AutoReleaseSwitch engFlowRSwitch(bitRead(PIND, PIND4), I2C_DATA, BUTTON_INDEX[BTN_IDX_ENG_FUEL_FLOW_R_NORM], BUTTON_INDEX[BTN_IDX_ENG_FUEL_FLOW_R_OVERRIDE]);
-  engFlowRSwitch.run(bitRead(PIND, PIND4), &currentMillis);
+  static AutoReleaseSwitch engFlowRSwitch(bitRead(PIND, PIND4), I2C_DATA, BUTTON_INDEX[BTN_IDX_ENG_FUEL_FLOW_R_NORM]);
+  engFlowRSwitch.run(bitRead(PIND, PIND4), &currentMillis, BUTTON_INDEX[BTN_IDX_ENG_FUEL_FLOW_R_OVERRIDE]);
 
-  static AutoReleaseSwitch flapsUpSwitch(bitRead(PIND, PIND5), I2C_DATA, BUTTON_INDEX[BTN_IDX_FLAPS_UP], BUTTON_INDEX[BTN_IDX_FLAPS_MVR]);
-  flapsUpSwitch.run(bitRead(PIND, PIND5), &currentMillis);
+  static AutoReleaseSwitch flapsUpSwitch(bitRead(PIND, PIND5), I2C_DATA, BUTTON_INDEX[BTN_IDX_FLAPS_UP]);
+  flapsUpSwitch.run(bitRead(PIND, PIND5), &currentMillis, BUTTON_INDEX[BTN_IDX_FLAPS_MVR]);
 
-  static AutoReleaseSwitch flapsDownSwitch(bitRead(PIND, PIND6), I2C_DATA, BUTTON_INDEX[BTN_IDX_FLAPS_DN], BUTTON_INDEX[BTN_IDX_FLAPS_MVR]);
-  flapsDownSwitch.run(bitRead(PIND, PIND6), &currentMillis);
+  static AutoReleaseSwitch flapsDownSwitch(bitRead(PIND, PIND6), I2C_DATA, BUTTON_INDEX[BTN_IDX_FLAPS_DN]);
+  flapsDownSwitch.run(bitRead(PIND, PIND6), &currentMillis, BUTTON_INDEX[BTN_IDX_FLAPS_MVR]);
 }
