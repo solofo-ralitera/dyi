@@ -48,3 +48,20 @@ void KnobJoy::runIndefiniteLeftRight(
     _checkForRelease = false;
   }
 }
+
+/**
+ * i2cDataIndex: index du bytes pour l'axe, l'axe occupe la totalité du byte
+ */
+void KnobJoy::runAs8bitsAxes(int i2cDataIndex) {
+  long newPosition = knob.read();
+  if (newPosition <= -127) {
+    newPosition = -127;
+    knob.write(-127);
+  } else if (newPosition >= 127) {
+    newPosition = 127;
+    knob.write(127);
+  }
+  // * -1 : to reverse the default rotation calculation (negative for right turn and positive for left turn)
+  // Send bytes [0-255] instead of [-127-127] and just the first bytes of the long value
+  _i2cData[i2cDataIndex] = map(newPosition * -1, -127, 127, 0, 255) & 0b11111111;
+}

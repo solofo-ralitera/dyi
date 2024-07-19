@@ -48,8 +48,9 @@ SAS Panel
 // Adresse I2C du module
 #define I2C_ADDRESS 2
 // Taille des données I2C à tranmettre (en bytes)
-#define BUFFER_SIZE 3
+#define BUFFER_SIZE 4
 byte I2C_DATA[BUFFER_SIZE] = {
+  B00000000,
   B00000000,
   B00000000,
   B00000000,
@@ -108,7 +109,7 @@ void requestEvent()
 }
 
 void setup() {
-  Serial.begin(9600);
+  // Serial.begin(9600);
   
   // All pins as input (sauf A4 et A5 pour l'I2C)
   DDRB = DDRB & ~((1<<DDB0) | (1<<DDB1) | (1<<DDB2) | (1<<DDB3) | (1<<DDB4) | (1<<DDB5));

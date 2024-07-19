@@ -18,8 +18,12 @@ class KnobJoy
       byte *i2cDataRotateRightIndex,
       unsigned long *currentMillis
     );
+
+    /**
+    * i2cDataIndex: index of the byte to update in i2c data to send
+    */
+    void runAs8bitsAxes(int i2cDataIndex);
     
-    // TODO run as Pot
   private:
     byte *_i2cData;
     Encoder knob;
