@@ -18,6 +18,12 @@ class PushButton
     void run(
         byte pinStatus // Status of the switch pin (0 = pressed, 1 = released)
     );
+
+    void run(
+        byte pinStatus, // Status of the switch pin (0 = pressed, 1 = released)
+        unsigned long *currentMillis,
+        byte *i2cDataReleased
+    );
   private:
     byte *_i2cData;
     byte *_i2cDataIndex;

@@ -4,6 +4,12 @@
 #include "Arduino.h"
 #include <Encoder.h>
 
+
+// Delay between position change (millis)
+#define CHANGE_POSITION_DELAY 100
+// Number of position change before triggering joystick press
+#define CHANGE_POSITION_BUFFER 3
+
 class KnobJoy
 {
   public:

@@ -27,21 +27,26 @@ void SlaveModule::setBitAsJoystickStatus(Joystick_ *joystick, byte bitValue, int
   if (numButton > 63) {
     // Si le numéro du botton dépasse les 64 -> passe à l'index 2
     lastButtonsStateIndex = 2;
-    bitPosition = bitPosition - 64;
   } else if (numButton > 31) {
     // Si le numéro du botton dépasse les 32 -> passe à l'index 1
     lastButtonsStateIndex = 1;
-    bitPosition = bitPosition - 32;
   }
 
   // Si le bit est le même: raf pas d'action
   if (bitValue == bitRead(lastButtonsState[lastButtonsStateIndex], bitPosition)) {
     return;
   }
+
   if (bitValue) {
+    // Serial.print("Pressed ");
+    // Serial.print(numButton);
+    //   Serial.println("");
     joystick->pressButton(numButton);
     bitSet(lastButtonsState[lastButtonsStateIndex], bitPosition);
   } else {
+    // Serial.print("Released ");
+    // Serial.print(numButton);
+    // Serial.println("");
     joystick->releaseButton(numButton);
     bitClear(lastButtonsState[lastButtonsStateIndex], bitPosition);
   }
@@ -52,7 +57,6 @@ void SlaveModule::setBitAsJoystickStatus(Joystick_ *joystick, byte bitValue, int
 void SlaveModule::readModule(Joystick_ *joystick) {
   // use to store each received bytes from i2c
   static byte wireBuffer = 0;
-
   Wire.requestFrom(i2CAddress, i2CBufferSize);
   if(Wire.available() == i2CBufferSize) { // Si tous les données sont bien réccupérées
     // Loop sur chaque bytes reçcus

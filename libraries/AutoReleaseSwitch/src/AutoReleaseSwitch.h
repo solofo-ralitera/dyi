@@ -7,6 +7,8 @@ Relache automatiquement le boutton après XXX millis
 
 #include "Arduino.h"
 
+#define FIXED_POSITION_BUTTON_RESET_DELAY 250 // Fixed switch will be set as off after this delay (millis)
+
 class AutoReleaseSwitch
 {
   public:

@@ -1,7 +1,6 @@
 #include "Arduino.h"
 #include "AutoReleaseSwitch.h"
 
-#define FIXED_POSITION_BUTTON_RESET_DELAY 250 // Fixed switch will be set as off after this delay (millis)
 
 AutoReleaseSwitch::AutoReleaseSwitch(
   byte initialState,
@@ -41,6 +40,7 @@ void AutoReleaseSwitch::run(
   // Relâche le dernier statut du boutton après FIXED_POSITION_BUTTON_RESET_DELAY
   // Pour éviter de maintenir le boutton appuyé
   if (_checkForRelease && (*currentMillis - _previousMillis) >= FIXED_POSITION_BUTTON_RESET_DELAY) {
+    bitSet(_i2cData[_i2cDataPressed[0]], _i2cDataPressed[1]);
     bitClear(_i2cData[_i2cDataPressed[0]], _i2cDataPressed[1]);
     _checkForRelease = false;
   }
@@ -61,7 +61,10 @@ void AutoReleaseSwitch::run(
     //  OFF -> ON: active un boutton,
     //    puis relâche programatiquement le boutton après FIXED_POSITION_BUTTON_RESET_DELAY millis
     bitSet(_i2cData[_i2cDataPressed[0]], _i2cDataPressed[1]);
-    bitClear(_i2cData[i2cDataReleased[0]], i2cDataReleased[1]);
+    // Si c'est le même bouton pour pressed et released, pas besoin de clear le released
+    if (_i2cDataPressed[0] != i2cDataReleased[0] && _i2cDataPressed[1] != i2cDataReleased[1]) {
+      bitClear(_i2cData[i2cDataReleased[0]], i2cDataReleased[1]);
+    }
     _lastState = 0;
     _previousMillis = *currentMillis;
     _checkForRelease = true;
@@ -70,7 +73,9 @@ void AutoReleaseSwitch::run(
   //    puis relâche programatiquement le boutton après FIXED_POSITION_BUTTON_RESET_DELAY millis
   else if (pinStatus == 1 && _lastState == 0) {
     bitSet(_i2cData[i2cDataReleased[0]], i2cDataReleased[1]);
-    bitClear(_i2cData[_i2cDataPressed[0]], _i2cDataPressed[1]);
+    if (_i2cDataPressed[0] != i2cDataReleased[0] && _i2cDataPressed[1] != i2cDataReleased[1]) {
+      bitClear(_i2cData[_i2cDataPressed[0]], _i2cDataPressed[1]);
+    }
     _lastState = 1;
     _previousMillis = *currentMillis;
     _checkForRelease = true;

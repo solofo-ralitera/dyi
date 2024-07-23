@@ -2,12 +2,6 @@
 #include "KnobJoy.h"
 #include <Encoder.h>
 
-// Delay between position change (millis)
-#define CHANGE_POSITION_DELAY 100
-// Number of position change before triggering joystick press
-#define CHANGE_POSITION_BUFFER 3
-
-
 KnobJoy::KnobJoy(
   byte *i2cData,
   int pinLeft,
@@ -26,6 +20,7 @@ void KnobJoy::runIndefiniteLeftRight(
   unsigned long *currentMillis
 ) {
   long newPosition = knob.read();
+  // Serial.println(newPosition);
   if (abs(newPosition - oldPosition) > CHANGE_POSITION_BUFFER) {
     if (_checkForRelease == false) {
       if (newPosition > oldPosition) {
@@ -61,7 +56,7 @@ void KnobJoy::runAs8bitsAxes(int i2cDataIndex) {
     newPosition = 127;
     knob.write(127);
   }
-  // * -1 : to reverse the default rotation calculation (negative for right turn and positive for left turn)
+  // newPosition * -1 : to reverse the default rotation calculation (negative for right turn and positive for left turn)
   // Send bytes [0-255] instead of [-127-127] and just the first bytes of the long value
-  _i2cData[i2cDataIndex] = map(newPosition * -1, -127, 127, 0, 255) & 0b11111111;
+  _i2cData[i2cDataIndex] = map(newPosition, -127, 127, 0, 255) & 0b11111111;
 }

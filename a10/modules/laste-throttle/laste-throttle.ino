@@ -38,7 +38,6 @@ byte I2C_DATA[BUFFER_SIZE] = {
 #define BTN_IDX_AUTOPILOT_PATH 5
 #define BTN_IDX_AUTOPILOT_ALTHDG 6
 #define BTN_IDX_AUTOPILOT_ALT 7
-
 // Throttle panel
 #define BTN_IDX_LANDING_GEAR_WARN 8
 #define BTN_IDX_APU_START 9
@@ -54,38 +53,35 @@ byte I2C_DATA[BUFFER_SIZE] = {
 #define BTN_IDX_ENG_FUEL_FLOW_R_NORM 19
 #define BTN_IDX_ENG_FUEL_FLOW_R_OVERRIDE 20
 #define BTN_IDX_FLAPS_UP 21
-#define BTN_IDX_FLAPS_MVR 22
 #define BTN_IDX_FLAPS_DN 23
 
 
 // Index de chaque boutton dans I2C_DATA (row, col)
 byte BUTTON_INDEX[24][2] = {
-  // Laste panel
-  {0, 0}, // BTN_IDX_EAC_ON
-  {0, 1}, // BTN_IDX_EAC_OFF
-  {0, 2}, // BTN_IDX_RDR_ON
-  {0, 3}, // BTN_IDX_RDR_OFF
-  {0, 4}, // BTN_IDX_AUTOPILOT_ENGAGE / DISENGAGE
-  {0, 5}, // BTN_IDX_AUTOPILOT_PATH
-  {0, 6}, // BTN_IDX_AUTOPILOT_ALTHDG
-  {0, 7}, // BTN_IDX_AUTOPILOT_ALT
-  //// Throttle panel
-  {1, 0}, // BTN_IDX_LANDING_GEAR_WARN (test 4, 5)
-  {1, 1}, // BTN_IDX_APU_START
-  {1, 2}, // BTN_IDX_APU_OFF
-  {1, 3}, // BTN_IDX_ENG_OPER_L_IGN
-  {1, 4}, // BTN_IDX_ENG_OPER_L_NORM
-  {1, 5}, // BTN_IDX_ENG_OPER_L_MOTOR
-  {1, 6}, // BTN_IDX_ENG_OPER_R_IGN
-  {1, 7}, // BTN_IDX_ENG_OPER_R_NORM
-  {2, 0}, // BTN_IDX_ENG_OPER_R_MOTOR
-  {2, 1}, // BTN_IDX_ENG_FUEL_FLOW_L_NORM
-  {2, 2}, // BTN_IDX_ENG_FUEL_FLOW_L_OVERRIDE
-  {2, 3}, // BTN_IDX_ENG_FUEL_FLOW_R_NORM
-  {2, 4}, // BTN_IDX_ENG_FUEL_FLOW_R_OVERRIDE
-  {2, 5}, // BTN_IDX_FLAPS_UP
-  {2, 6}, // BTN_IDX_FLAPS_MVR
-  {2, 7}, //BTN_IDX_FLAPS_DN
+  {0, 0},
+  {0, 1},
+  {0, 2},
+  {0, 3},
+  {0, 4},
+  {0, 5},
+  {0, 6},
+  {0, 7},
+  {1, 0},
+  {1, 1},
+  {1, 2},
+  {1, 3},
+  {1, 4},
+  {1, 5},
+  {1, 6},
+  {1, 7},
+  {2, 0},
+  {2, 1},
+  {2, 2},
+  {2, 3},
+  {2, 4},
+  {2, 5},
+  {2, 6},
+  {2, 7},
 };
 
 void setup() {
@@ -156,12 +152,18 @@ void loop() {
   //D3
   static AutoReleaseSwitch autoPilotAltSwitch(bitRead(PIND, PIND3), I2C_DATA, BUTTON_INDEX[BTN_IDX_AUTOPILOT_ALT]);
   autoPilotAltSwitch.run(bitRead(PIND, PIND3), &currentMillis, BUTTON_INDEX[BTN_IDX_AUTOPILOT_ALTHDG]);
+  
   // D8
-  static AutoReleaseSwitch flapsUpSwitch(bitRead(PINB, PINB0), I2C_DATA, BUTTON_INDEX[BTN_IDX_FLAPS_UP]);
-  flapsUpSwitch.run(bitRead(PINB, PINB0), &currentMillis, BUTTON_INDEX[BTN_IDX_FLAPS_MVR]);
+  // static AutoReleaseSwitch flapsUpSwitch(bitRead(PINB, PINB0), I2C_DATA, BUTTON_INDEX[BTN_IDX_FLAPS_UP]);
+  // flapsUpSwitch.run(bitRead(PINB, PINB0), &currentMillis, BUTTON_INDEX[BTN_IDX_FLAPS_MVR]);
+  static PushButton flapsUp(I2C_DATA, BUTTON_INDEX[BTN_IDX_FLAPS_UP]);  
+  flapsUp.run(bitRead(PINB, PINB0));
+
   // D5
-  static AutoReleaseSwitch flapsDownSwitch(bitRead(PIND, PIND5), I2C_DATA, BUTTON_INDEX[BTN_IDX_FLAPS_DN]);
-  flapsDownSwitch.run(bitRead(PIND, PIND5), &currentMillis, BUTTON_INDEX[BTN_IDX_FLAPS_MVR]);
+  // static AutoReleaseSwitch flapsDownSwitch(bitRead(PIND, PIND5), I2C_DATA, BUTTON_INDEX[BTN_IDX_FLAPS_DN]);
+  // flapsDownSwitch.run(bitRead(PIND, PIND5), &currentMillis, BUTTON_INDEX[BTN_IDX_FLAPS_MVR]);
+  static PushButton flapsDown(I2C_DATA, BUTTON_INDEX[BTN_IDX_FLAPS_DN]);  
+  flapsDown.run(bitRead(PIND, PIND5));
 
   //////// Throttle Panel
   static PushButton landingGearButton(I2C_DATA, BUTTON_INDEX[BTN_IDX_LANDING_GEAR_WARN]);
@@ -170,14 +172,18 @@ void loop() {
   static AutoReleaseSwitch apuStartSwitch(bitRead(PINC, PINC1), I2C_DATA, BUTTON_INDEX[BTN_IDX_APU_START]);
   apuStartSwitch.run(bitRead(PINC, PINC1), &currentMillis, BUTTON_INDEX[BTN_IDX_APU_OFF]);
 
-  static AutoReleaseSwitch engOperLIgnSwitch(bitRead(PINB, PINB5), I2C_DATA, BUTTON_INDEX[BTN_IDX_ENG_OPER_L_IGN]);
-  engOperLIgnSwitch.run(bitRead(PINB, PINB5), &currentMillis, BUTTON_INDEX[BTN_IDX_ENG_OPER_L_NORM]);
+  // static PushButton engOperLIgn(bitRead(PINB, PINB5), I2C_DATA, BUTTON_INDEX[BTN_IDX_ENG_OPER_L_IGN]);
+  // engOperLIgn.run(bitRead(PINB, PINB5), &currentMillis, BUTTON_INDEX[BTN_IDX_ENG_OPER_L_NORM]);
+  static PushButton engOperLIgn(I2C_DATA, BUTTON_INDEX[BTN_IDX_ENG_OPER_L_IGN]);  
+  engOperLIgn.run(bitRead(PINB, PINB5));
 
   static AutoReleaseSwitch engOperLMotorSwitch(bitRead(PINC, PINC0), I2C_DATA, BUTTON_INDEX[BTN_IDX_ENG_OPER_L_MOTOR]);
   engOperLMotorSwitch.run(bitRead(PINC, PINC0), &currentMillis, BUTTON_INDEX[BTN_IDX_ENG_OPER_L_NORM]);
 
-  static AutoReleaseSwitch engOperRIgnSwitch(bitRead(PINB, PINB3), I2C_DATA, BUTTON_INDEX[BTN_IDX_ENG_OPER_R_IGN]);
-  engOperRIgnSwitch.run(bitRead(PINB, PINB3), &currentMillis, BUTTON_INDEX[BTN_IDX_ENG_OPER_R_NORM]);
+  // static AutoReleaseSwitch engOperRIgnSwitch(bitRead(PINB, PINB3), I2C_DATA, BUTTON_INDEX[BTN_IDX_ENG_OPER_R_IGN]);
+  // engOperRIgnSwitch.run(bitRead(PINB, PINB3), &currentMillis, BUTTON_INDEX[BTN_IDX_ENG_OPER_R_NORM]);
+  static PushButton engOperRIgn(I2C_DATA, BUTTON_INDEX[BTN_IDX_ENG_OPER_R_IGN]);  
+  engOperRIgn.run(bitRead(PINB, PINB3));
 
   static AutoReleaseSwitch engOperRMotorSwitch(bitRead(PINB, PINB4), I2C_DATA, BUTTON_INDEX[BTN_IDX_ENG_OPER_R_MOTOR]);
   engOperRMotorSwitch.run(bitRead(PINB, PINB4), &currentMillis, BUTTON_INDEX[BTN_IDX_ENG_OPER_R_NORM]);

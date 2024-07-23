@@ -1,4 +1,5 @@
-#include "SlaveModule.h"
+#include <Joystick.h>
+#include <Wire.h>
 
 Joystick_ joystick (JOYSTICK_DEFAULT_REPORT_ID, JOYSTICK_TYPE_JOYSTICK,
   128, 0, // Button Count, Hat Switch Count
@@ -16,7 +17,7 @@ Joystick_ joystick (JOYSTICK_DEFAULT_REPORT_ID, JOYSTICK_TYPE_JOYSTICK,
 );
 
 void setup() {
-  // Serial.begin(9600);
+  Serial.begin(9600);
 
   // Set full axes
   joystick.setXAxisRange(-127, 127);
@@ -52,13 +53,7 @@ void setup() {
 }
 
 void loop() {
-  // 23 boutons/ctrl
-  static int lasteDataI2CConfig[3] = {CMD_BTN, CMD_BTN, CMD_BTN};
-  static SlaveModule lasteAndThrottlePanel(1, 3, 0, lasteDataI2CConfig);
-  lasteAndThrottlePanel.readModule(&joystick);
-  
-  // 18 boutons/ctrl
-  static int sasDataI2CConfig[3] = {CMD_BTN, CMD_BTN, CMD_BTN};
-  static SlaveModule sasAndFuel(2, 3, 24, sasDataI2CConfig);
-  sasAndFuel.readModule(&joystick);
+  joystick.pressButton(40);
+  delay(1000);
+  joystick.releaseButton(40);
 }
