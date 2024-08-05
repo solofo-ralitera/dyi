@@ -52,13 +52,24 @@ void setup() {
 }
 
 void loop() {
-  // 23 boutons/ctrl
-  static int lasteDataI2CConfig[3] = {CMD_BTN, CMD_BTN, CMD_BTN};
-  static SlaveModule lasteAndThrottlePanel(1, 3, 0, lasteDataI2CConfig);
+  // 15 boutons/ctrl
+  static int lasteDataI2CConfig[2] = {CMD_BTN, CMD_BTN};
+  static SlaveModule lasteAndThrottlePanel(1, 2, 0, 15, lasteDataI2CConfig);
   lasteAndThrottlePanel.readModule(&joystick);
   
   // 18 boutons/ctrl
   static int sasDataI2CConfig[3] = {CMD_BTN, CMD_BTN, CMD_BTN};
-  static SlaveModule sasAndFuel(2, 3, 24, sasDataI2CConfig);
-  sasAndFuel.readModule(&joystick);
+  static SlaveModule sasAndAux(2, 3, 15, 18, sasDataI2CConfig);
+  sasAndAux.readModule(&joystick);
+
+  // 18 boutons/ctrl
+  static int fuelDataI2CConfig[3] = {CMD_BTN, CMD_BTN, CMD_BTN};
+  static SlaveModule fuelAndEmerBrake(3, 3, 33, 18, fuelDataI2CConfig);
+  fuelAndEmerBrake.readModule(&joystick);
+
+  // 21 boutons/ctrl
+  static int ahcpDataI2CConfig[3] = {CMD_BTN, CMD_BTN, CMD_BTN};
+  static SlaveModule ahcpAndLandingGear(4, 3, 51, 21, ahcpDataI2CConfig);
+  ahcpAndLandingGear.readModule(&joystick);
+
 }

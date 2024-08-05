@@ -12,7 +12,7 @@ Fuel System Control Panel (XXX bouttons)
   
   Crossfeed: switch 2 position (ON/OFF)
   TK Gate: switch 2 position (OPEN/OFF)
-  Air Refuel Process: lever 2 position
+  Air Refuel Process: lever 2 position;
 
   Fill Disable Wing L: pull/push button
   Fill Disable Wing R: pull puch button
@@ -152,34 +152,47 @@ void loop() {
 
   // SAS Engage: même bouton pour ON et OFF
   // D5
-  static AutoReleaseSwitch yawSasEngageLeft(bitRead(PIND, PIND5), I2C_DATA, BUTTON_INDEX[BTN_IDX_YAW_SAS_ENGAGE_LEFT]);
-  yawSasEngageLeft.run(bitRead(PIND, PIND5), &currentMillis, BUTTON_INDEX[BTN_IDX_YAW_SAS_ENGAGE_LEFT]);
+  // static AutoReleaseSwitch yawSasEngageLeft(bitRead(PIND, PIND5), I2C_DATA, BUTTON_INDEX[BTN_IDX_YAW_SAS_ENGAGE_LEFT]);
+  // yawSasEngageLeft.run(bitRead(PIND, PIND5), &currentMillis, BUTTON_INDEX[BTN_IDX_YAW_SAS_ENGAGE_LEFT]);
+  static PushButton yawSasEngageLeft(I2C_DATA, BUTTON_INDEX[BTN_IDX_YAW_SAS_ENGAGE_LEFT]);  
+  yawSasEngageLeft.run(bitRead(PIND, PIND5));
   // D6
-  static AutoReleaseSwitch yawSasEngageRight(bitRead(PIND, PIND6), I2C_DATA, BUTTON_INDEX[BTN_IDX_YAW_SAS_ENGAGE_RIGHT]);
-  yawSasEngageRight.run(bitRead(PIND, PIND6), &currentMillis, BUTTON_INDEX[BTN_IDX_YAW_SAS_ENGAGE_RIGHT]);
+  // static AutoReleaseSwitch yawSasEngageRight(bitRead(PIND, PIND6), I2C_DATA, BUTTON_INDEX[BTN_IDX_YAW_SAS_ENGAGE_RIGHT]);
+  // yawSasEngageRight.run(bitRead(PIND, PIND6), &currentMillis, BUTTON_INDEX[BTN_IDX_YAW_SAS_ENGAGE_RIGHT]);
+  static PushButton yawSasEngageRight(I2C_DATA, BUTTON_INDEX[BTN_IDX_YAW_SAS_ENGAGE_RIGHT]);  
+  yawSasEngageRight.run(bitRead(PIND, PIND6));
   // D7
-  static AutoReleaseSwitch pitchSasEngageLeft(bitRead(PIND, PIND7), I2C_DATA, BUTTON_INDEX[BTN_IDX_PITCH_SAS_ENGAGE_LEFT]);
-  pitchSasEngageLeft.run(bitRead(PIND, PIND7), &currentMillis, BUTTON_INDEX[BTN_IDX_PITCH_SAS_ENGAGE_LEFT]);
+  // static AutoReleaseSwitch pitchSasEngageLeft(bitRead(PIND, PIND7), I2C_DATA, BUTTON_INDEX[BTN_IDX_PITCH_SAS_ENGAGE_LEFT]);
+  // pitchSasEngageLeft.run(bitRead(PIND, PIND7), &currentMillis, BUTTON_INDEX[BTN_IDX_PITCH_SAS_ENGAGE_LEFT]);
+  static PushButton pitchSasEngageLeft(I2C_DATA, BUTTON_INDEX[BTN_IDX_PITCH_SAS_ENGAGE_LEFT]);  
+  pitchSasEngageLeft.run(bitRead(PIND, PIND7));
   // D8
-  static AutoReleaseSwitch pitchSasEngageRight(bitRead(PINB, PINB0), I2C_DATA, BUTTON_INDEX[BTN_IDX_PITCH_SAS_ENGAGE_RIGHT]);
-  pitchSasEngageRight.run(bitRead(PINB, PINB0), &currentMillis, BUTTON_INDEX[BTN_IDX_PITCH_SAS_ENGAGE_RIGHT]);
+  // static AutoReleaseSwitch pitchSasEngageRight(bitRead(PINB, PINB0), I2C_DATA, BUTTON_INDEX[BTN_IDX_PITCH_SAS_ENGAGE_RIGHT]);
+  // pitchSasEngageRight.run(bitRead(PINB, PINB0), &currentMillis, BUTTON_INDEX[BTN_IDX_PITCH_SAS_ENGAGE_RIGHT]);
+  static PushButton pitchSasEngageRight(I2C_DATA, BUTTON_INDEX[BTN_IDX_PITCH_SAS_ENGAGE_RIGHT]);  
+  pitchSasEngageRight.run(bitRead(PINB, PINB0));
 
   // AUX LTG
   // A3
   static PushButton fireDetect(I2C_DATA, BUTTON_INDEX[BTN_IDX_FIRE_DETECT]);  
   fireDetect.run(bitRead(PINC, PINC3));
+  
   // A2
   static PushButton signalLightsTest(I2C_DATA, BUTTON_INDEX[BTN_IDX_SIGNAL_LIGHTS_TEST]);  
   signalLightsTest.run(bitRead(PINC, PINC2));
+
   // D13, même bouton pour OVERRIDE et NORM
   static AutoReleaseSwitch harsOverride(bitRead(PINB, PINB5), I2C_DATA, BUTTON_INDEX[BTN_IDX_HARS_SAS_OVERRIDE]);
   harsOverride.run(bitRead(PINB, PINB5), &currentMillis, BUTTON_INDEX[BTN_IDX_HARS_SAS_OVERRIDE]);
+  
   // Encoder 2/11
   static KnobJoy refuelStatusLts(I2C_DATA, 2, 11);
   refuelStatusLts.runIndefiniteLeftRight(BUTTON_INDEX[BTN_IDX_REFUEL_LTS_DIM], BUTTON_INDEX[BTN_IDX_REFUEL_LTS_BRT], &currentMillis);
+  
   // D1
   static AutoReleaseSwitch nvisLtsTop(bitRead(PIND, PIND1), I2C_DATA, BUTTON_INDEX[BTN_IDX_NVIS_LTS_TOP]);
   nvisLtsTop.run(bitRead(PIND, PIND1), &currentMillis, BUTTON_INDEX[BTN_IDX_NVIS_LTS_ALL]);
+  
   // A0
   static AutoReleaseSwitch nvisLtsOff(bitRead(PINC, PINC0), I2C_DATA, BUTTON_INDEX[BTN_IDX_NVIS_LTS_OFF]);
   nvisLtsOff.run(bitRead(PINC, PINC0), &currentMillis, BUTTON_INDEX[BTN_IDX_NVIS_LTS_ALL]);

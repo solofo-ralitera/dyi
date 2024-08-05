@@ -8,12 +8,14 @@ SlaveModule::SlaveModule(
   int _i2CAddress,
   int _i2CBufferSize,
   int _numberOfFirstButton,
+  int _numberOfButtons,
   int *_lasteDataI2CConfig
 ): lastButtonsState { 0,0,0,0,0,0,0,0 }
 {
   i2CAddress = _i2CAddress;
   i2CBufferSize = _i2CBufferSize;
   numberOfFirstButton = _numberOfFirstButton;
+  numberOfButtons = _numberOfButtons;
   lasteDataI2CConfig = _lasteDataI2CConfig;
 }
 
@@ -23,6 +25,9 @@ SlaveModule::SlaveModule(
 // Si différent -> set le statut du boutton en pressed (bitValue = 1) ou released (bitValue = 0) -> maj de la valeur du bit dans LAST_BUTTON_STATE
 void SlaveModule::setBitAsJoystickStatus(Joystick_ *joystick, byte bitValue, int bitPosition) {
   int numButton = numberOfFirstButton + bitPosition;
+  if (numButton >= numberOfFirstButton + numberOfButtons) {
+    return;
+  }
   int lastButtonsStateIndex = 0;
   if (numButton > 63) {
     // Si le numéro du botton dépasse les 64 -> passe à l'index 2

@@ -25,6 +25,7 @@ class SlaveModule
             int i2CAddress, // Adresse I2C du module
             int i2CBufferSize, // Taille en bytes (octets) des données envoyé par le module
             int numberOfFirstButton, // numero du premier boutton du module
+            int _numberOfButtons, // Nombre de bouttons (joystick) du module
             /*
             Type de commande pour chaque bytes de data I2C
             All axes has a range of 0-255
@@ -46,6 +47,7 @@ class SlaveModule
         int i2CAddress;
         int i2CBufferSize;
         int numberOfFirstButton;
+        int numberOfButtons;
         uint32_t lastButtonsState[8]; // max 64 buttons per module
         int *lasteDataI2CConfig;
 };

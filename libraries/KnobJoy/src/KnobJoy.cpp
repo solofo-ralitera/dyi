@@ -25,10 +25,12 @@ void KnobJoy::runIndefiniteLeftRight(
     if (_checkForRelease == false) {
       if (newPosition > oldPosition) {
         // Turn left
+        // Serial.println("left");
         bitSet(_i2cData[i2cDataRotateLeftIndex[0]], i2cDataRotateLeftIndex[1]);
         _previousMillis = *currentMillis;
         _checkForRelease = true;
       } else if (newPosition < oldPosition) {
+        // Serial.println("right");
         // Turn right
         bitSet(_i2cData[i2cDataRotateRightIndex[0]], i2cDataRotateRightIndex[1]);
         _previousMillis = *currentMillis;

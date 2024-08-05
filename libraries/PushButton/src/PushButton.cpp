@@ -18,3 +18,16 @@ void PushButton::run(byte pinStatus) {
     bitClear(_i2cData[_i2cDataIndex[0]], _i2cDataIndex[1]);
   }
 }
+
+void PushButton::run(
+  byte pinStatus,
+  unsigned long *currentMillis,
+  byte *i2cDataReleased
+) {
+  if (pinStatus == 0) {
+    bitSet(_i2cData[_i2cDataIndex[0]], _i2cDataIndex[1]);
+  } else {
+    // Au relachement du bouton: désactive le bouton et reactive à nouveaux pour x millis
+    bitClear(_i2cData[_i2cDataIndex[0]], _i2cDataIndex[1]);
+  }
+}
