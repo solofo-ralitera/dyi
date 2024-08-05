@@ -1,7 +1,22 @@
+/*
+  Tell DCS-BIOS to use a serial connection and use the default Arduino Serial
+  library. This will work on the vast majority of Arduino-compatible boards,
+  but you can get corrupted data if you have too many or too slow outputs
+  (e.g. when you have multiple character displays), because the receive
+  buffer can fill up if the sketch spends too much time updating them.
+  
+  If you can, use the IRQ Serial connection instead.
+*/
+#define DCSBIOS_IRQ_SERIAL
+// #define DCSBIOS_DEFAULT_SERIAL
+
 #include <SPI.h>          // f.k. for Arduino-1.5.2
-#include "Adafruit_GFX.h"// Hardware-specific library
+#include "Adafruit_GFX.h"
 #include <MCUFRIEND_kbv.h>
-// Enable SUPPORT_8347D in MCUFRIEND_kbv.cpp
+#include "DcsBios.h"
+#include "internal/Addresses.h"
+
+// Don't forget to enable SUPPORT_8347D in MCUFRIEND_kbv.cpp
 MCUFRIEND_kbv tft;
 
 #define	BLACK   0x0000
@@ -13,15 +28,6 @@ MCUFRIEND_kbv tft;
 #define YELLOW  0xFFE0
 #define WHITE   0xFFFF
 
-void setup(void) {
-  // Serial.begin(9600);
-
-  uint16_t ID = tft.readID(); //
-  if (ID == 0xD3D3) ID = 0x9481; // write-only shield
-  tft.begin(ID);
-  tft.fillScreen(BLACK);
-  tft.setRotation(1);
-}
 
 void printmsg(const char *text, int col, int row, uint8_t size)
 {
@@ -31,6 +37,28 @@ void printmsg(const char *text, int col, int row, uint8_t size)
     tft.println(text);
 }
 
+void onArc210ActiveChannelChange(char* newValue) {
+  printmsg(newValue, 10, 30, 2);
+}
+void onArc210FrequencyChange(char* newValue) {
+  printmsg(newValue, 10, 60, 3);
+}
+
+
+DcsBios::StringBuffer<2> arc210ActiveChannelBuffer(A_10C_ARC210_ACTIVE_CHANNEL_ADDR, onArc210ActiveChannelChange);
+DcsBios::StringBuffer<7> arc210FrequencyBuffer(A_10C_ARC210_FREQUENCY_ADDR, onArc210FrequencyChange);
+void setup(void) {
+  uint16_t ID = tft.readID(); //
+  if (ID == 0xD3D3) ID = 0x9481; // write-only shield
+  tft.begin(ID);
+  tft.fillScreen(BLACK);
+  tft.setRotation(1);
+
+  DcsBios::setup();
+}
+
 void loop(void) {
+  DcsBios::loop();
   printmsg("Hello", 10, 10, 2);
+
 }
