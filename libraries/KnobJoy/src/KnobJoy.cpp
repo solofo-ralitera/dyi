@@ -30,8 +30,8 @@ void KnobJoy::runIndefiniteLeftRight(
         _previousMillis = *currentMillis;
         _checkForRelease = true;
       } else if (newPosition < oldPosition) {
-        // Serial.println("right");
         // Turn right
+        // Serial.println("right");
         bitSet(_i2cData[i2cDataRotateRightIndex[0]], i2cDataRotateRightIndex[1]);
         _previousMillis = *currentMillis;
         _checkForRelease = true;
@@ -61,4 +61,20 @@ void KnobJoy::runAs8bitsAxes(int i2cDataIndex) {
   // newPosition * -1 : to reverse the default rotation calculation (negative for right turn and positive for left turn)
   // Send bytes [0-255] instead of [-127-127] and just the first bytes of the long value
   _i2cData[i2cDataIndex] = map(newPosition, -127, 127, 0, 255) & 0b11111111;
+}
+
+void KnobJoy::runCallBack(void (*leftCallback)(), void (*rightCallback)()) {
+  long newPosition = knob.read();
+  if (abs(newPosition - oldPosition) > CHANGE_POSITION_BUFFER) {
+    if (newPosition > oldPosition) {
+      // Turn left
+      // Serial.println("left");
+      leftCallback();
+    } else if (newPosition < oldPosition) {
+      // Turn right
+      // Serial.println("right");
+      rightCallback();
+    }
+    oldPosition = newPosition;
+  }
 }

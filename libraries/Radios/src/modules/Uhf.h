@@ -12,6 +12,10 @@ class Uhf
     const char *title;
     bool isActive;
 
+    char *freq100MHz;
+    unsigned int selectedMasterSwitch;
+    unsigned int selectedSecondarySwitch;
+
     void begin();
     void run();
 
@@ -22,6 +26,7 @@ class Uhf
     void setFrequency(char* newValue);
     void setSelectedMasterSwitch(unsigned int newValue);
     void setSelectedSecondarySwitch(unsigned int newValue);
+    void set100MHz(char* newValue);
     
   private:
     TftDisplay* display;
@@ -29,11 +34,9 @@ class Uhf
     char* channel;
     char* frequency;
 
-    unsigned int selectedMasterSwitch;
     const unsigned int numMasterSwitches;
     String masterSwitches[4];
 
-    unsigned int selectedSecondarySwitch;
     const unsigned int numSecondarySwitches;
     String secondarySwitches[3];
 };

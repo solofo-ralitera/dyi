@@ -21,7 +21,11 @@ class Arc210
     void setChannel(char* newValue);
     void setFrequency(char* newValue);
     void setModulation(char* newValue);
+
+    unsigned int selectedMasterSwitch;
     void setSelectedMasterSwitch(unsigned int newValue);
+
+    unsigned int selectedSecondarySwitch;
     void setSelectedSecondarySwitch(unsigned int newValue);
     
   private:
@@ -31,11 +35,9 @@ class Arc210
     char* frequency;
     char* modulation; // AM/FM
 
-    unsigned int selectedMasterSwitch;
     const unsigned int numMasterSwitches;
     String masterSwitches[4];
 
-    unsigned int selectedSecondarySwitch;
     const unsigned int numSecondarySwitches;
     String secondarySwitches[4];
 };

@@ -24,6 +24,7 @@ secondarySwitches {
     display = _display;
     channel = "xx";
     frequency = "XXXXXXX";
+    freq100MHz = "";
 
     selectedMasterSwitch = 0;
     selectedSecondarySwitch = 0;

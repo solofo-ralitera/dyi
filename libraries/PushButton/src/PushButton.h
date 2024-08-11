@@ -24,9 +24,16 @@ class PushButton
         unsigned long *currentMillis,
         byte *i2cDataReleased
     );
+
+    void runCallBack(
+      byte pinStatus, // Status of the switch pin (0 = pressed, 1 = released)
+      void (*pressCallback)(),
+      void (*releaseCallback)()
+    );
   private:
     byte *_i2cData;
     byte *_i2cDataIndex;
+    byte *lastStatus;
 };
 
 #endif

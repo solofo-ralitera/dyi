@@ -30,6 +30,10 @@ class KnobJoy
     */
     void runAs8bitsAxes(int i2cDataIndex);
     
+    void runCallBack(
+      void (*leftCallback)(),
+      void (*rightCallback)()
+    );
   private:
     byte *_i2cData;
     Encoder knob;
