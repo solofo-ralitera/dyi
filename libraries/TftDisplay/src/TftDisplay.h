@@ -19,10 +19,15 @@ class TftDisplay
 
     void clearScreen();
     void printRadioTitle(int activeIndex, char *text1, char *text2, char *text3, char *text4, char *text5);
+    void printTRHelp(const char* text1, const char* text2);
+    void printBCHelp(const char* text1);
     void printRadioChannel(char* text);
     void printRadioFrequency(char *text);
     void printRadioModulation(char *text);
     void printRadioSwitch(String switches[], unsigned int numSwitch, unsigned int selectedSwitch, int offsetPrint);
+    void drawVolume(int volume);
+    void drawRadioSql(unsigned int sql);
+    void drawTacanTest(unsigned int test);
 };
 
 #endif

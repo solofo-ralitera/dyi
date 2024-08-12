@@ -12,14 +12,12 @@ class Ils
     const char *title;
     bool isActive;
 
-    void begin();
-    void run();
-
     void activate();
     void deactivate();
 
     void setFrequency(char* newValue);
     void setSelectedMasterSwitch(unsigned int newValue);
+    void setVolume(int newValue);
     
   private:
     TftDisplay* display;
@@ -28,6 +26,7 @@ class Ils
 
     unsigned int selectedMasterSwitch;
     const unsigned int numMasterSwitches;
+    int volume;
     String masterSwitches[2];
 };
 

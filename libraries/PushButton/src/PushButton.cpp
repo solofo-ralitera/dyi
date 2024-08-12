@@ -1,6 +1,10 @@
 #include "Arduino.h"
 #include "PushButton.h"
 
+PushButton::PushButton()
+{
+  lastStatus = 0;
+}
 
 PushButton::PushButton(
   byte *i2cData,

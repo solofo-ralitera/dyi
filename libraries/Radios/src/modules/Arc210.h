@@ -12,9 +12,6 @@ class Arc210
     const char *title;
     bool isActive;
 
-    void begin();
-    void run();
-
     void activate();
     void deactivate();
 
@@ -28,6 +25,8 @@ class Arc210
     unsigned int selectedSecondarySwitch;
     void setSelectedSecondarySwitch(unsigned int newValue);
     
+    void setSql(unsigned int newValue);
+
   private:
     TftDisplay* display;
 
@@ -35,11 +34,12 @@ class Arc210
     char* frequency;
     char* modulation; // AM/FM
 
+    unsigned int sql;  
     const unsigned int numMasterSwitches;
-    String masterSwitches[4];
+    String masterSwitches[7];
 
     const unsigned int numSecondarySwitches;
-    String secondarySwitches[4];
+    String secondarySwitches[7];
 };
 
 #endif

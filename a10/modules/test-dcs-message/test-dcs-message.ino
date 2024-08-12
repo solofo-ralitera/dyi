@@ -13,7 +13,7 @@
 #include "DcsBios.h"
 
 // DcsBios::RotaryEncoder arc10Mhz("ARC210_100MHZ_SEL", "DEC", "INC", 22, 23);
-DcsBios::ActionButton arc210FskUpToggle("ARC210_FSK_UP", "TOGGLE", 22);
+// DcsBios::ActionButton arc210FskUpToggle("ARC210_FSK_UP", "TOGGLE", 22);
 
 void setup() {
   DcsBios::setup();
@@ -24,9 +24,9 @@ void loop() {
   // DcsBios::loop();
 
   while(!DcsBios::tryToSendDcsBiosMessage("ARC210_FSK_UP", "1"));
-  while(!DcsBios::tryToSendDcsBiosMessage("ARC210_FSK_UP 1", ""));
+  // while(!DcsBios::tryToSendDcsBiosMessage("ARC210_FSK_UP 1", ""));
   delay(1000);
   while(!DcsBios::tryToSendDcsBiosMessage("ARC210_FSK_UP", "0"));
-  while(!DcsBios::tryToSendDcsBiosMessage("ARC210_FSK_UP 0", ""));
+  // while(!DcsBios::tryToSendDcsBiosMessage("ARC210_FSK_UP 0", ""));
   delay(1000);
 }

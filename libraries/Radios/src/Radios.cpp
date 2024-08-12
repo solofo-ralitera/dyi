@@ -9,8 +9,8 @@
   
   If you can, use the IRQ Serial connection instead.
 */
-// #define DCSBIOS_IRQ_SERIAL
-#define DCSBIOS_DEFAULT_SERIAL
+#define DCSBIOS_IRQ_SERIAL
+// #define DCSBIOS_DEFAULT_SERIAL
 
 #include "DcsBios.h"
 #include "TftDisplay.h"
@@ -98,6 +98,9 @@ DcsBios::IntegerBuffer arc210MasterSwitchBuffer(A_10C_ARC210_MASTER, [](unsigned
 DcsBios::IntegerBuffer arc210SecSwitchBuffer(A_10C_ARC210_SEC_SW, [](unsigned int newValue) {
   arc210.setSelectedSecondarySwitch(newValue);
 });
+DcsBios::IntegerBuffer arc210SqlBuffer(A_10C_ARC210_SQUELCH, [](unsigned int newValue) {
+  arc210.setSql(newValue);
+});
 ///////////// UHF ////////////////////
 DcsBios::StringBuffer<2> uhfPresetBuffer(A_10C_UHF_PRESET, [](char* newValue) {
   uhf.setChannel(newValue);
@@ -111,8 +114,11 @@ DcsBios::IntegerBuffer uhfMasterSwitchBuffer(A_10C_UHF_FUNCTION, [](unsigned int
 DcsBios::IntegerBuffer uhfSecSwitchBuffer(A_10C_UHF_MODE, [](unsigned int newValue) {
   uhf.setSelectedSecondarySwitch(newValue);
 });
-DcsBios::StringBuffer<1> uhf100MHzSelBuffer(A_10C_UHF_100MHZ_SEL, [](char* newValue) {
-  uhf.freq100MHz = newValue;
+DcsBios::IntegerBuffer uhfVolumeBuffer(A_10C_UHF_VOL, [](unsigned int newValue) {
+  uhf.setVolume(map(newValue, 0, 65535, 0, 100));
+});
+DcsBios::IntegerBuffer uhfSqlBuffer(A_10C_UHF_SQUELCH, [](unsigned int newValue) {
+  uhf.setSql(newValue);
 });
 ///////////// VHF Fm ////////////////////
 DcsBios::StringBuffer<2> vhfFmPresetBuffer(A_10C_VHFFM_PRESET, [](char* newValue) {
@@ -123,29 +129,38 @@ DcsBios::StringBuffer<7> vhfFmFrequencyBuffer(A_10C_VHF_FM_FREQUENCY_S, [](char*
 });
 DcsBios::IntegerBuffer vhfFmMasterSwitchBuffer(A_10C_VHFFM_FREQEMER, [](unsigned int newValue) {
   vhfFm.setSelectedMasterSwitch(newValue);
-  activateVhfFm();
 });
 DcsBios::IntegerBuffer vhfFmSecSwitchBuffer(A_10C_VHFFM_MODE, [](unsigned int newValue) {
   vhfFm.setSelectedSecondarySwitch(newValue);
-  activateVhfFm();
+});
+DcsBios::IntegerBuffer vhfFmVolumeBuffer(A_10C_VHFFM_VOL, [](unsigned int newValue) {
+  vhfFm.setVolume(map(newValue, 0, 65535, 0, 100));
+});
+DcsBios::IntegerBuffer vhfFmSqlBuffer(A_10C_VHFFM_SQUELCH, [](unsigned int newValue) {
+  vhfFm.setSql(newValue);
 });
 ///////////// ILS ////////////////////
 DcsBios::StringBuffer<6> ilsFrequencyBuffer(A_10C_ILS_FREQUENCY_S, [](char* newValue) {
   ils.setFrequency(newValue);
-  activateIls();
 });
 DcsBios::IntegerBuffer ilsMasterSwitchBuffer(A_10C_ILS_PWR, [](unsigned int newValue) {
   ils.setSelectedMasterSwitch(newValue);
-  activateIls();
+});
+DcsBios::IntegerBuffer ilsVolumeBuffer(A_10C_ILS_VOL, [](unsigned int newValue) {
+  ils.setVolume(map(newValue, 0, 65535, 0, 100));
 });
 ///////////// TACAN ////////////////////
 DcsBios::StringBuffer<4> tacanFrequencyBuffer(A_10C_TACAN_CHANNEL, [](char* newValue) {
   tacan.setFrequency(newValue);
-  activateTacan();
 });
 DcsBios::IntegerBuffer tacanMasterSwitchBuffer(A_10C_TACAN_MODE, [](unsigned int newValue) {
   tacan.setSelectedMasterSwitch(newValue);
-  activateTacan();
+});
+DcsBios::IntegerBuffer tacanVolumeBuffer(A_10C_TACAN_VOL, [](unsigned int newValue) {
+  tacan.setVolume(map(newValue, 0, 65535, 0, 100));
+});
+DcsBios::IntegerBuffer tacanTestBuffer(A_10C_TACAN_TEST, [](unsigned int newValue) {
+  tacan.setTest(newValue);
 });
 #endif
 
@@ -205,13 +220,7 @@ int Radios::getActivatedModule() {
 }
 
 void Radios::sendDcsCommand(const char* msg, const char* args) {
-  while(!DcsBios::tryToSendDcsBiosMessage("ARC210_FSK_UP", "1"));
-  while(!DcsBios::tryToSendDcsBiosMessage("ARC210_FSK_UP 1", ""));
-  delay(1000);
-  while(!DcsBios::tryToSendDcsBiosMessage("ARC210_FSK_UP", "0"));
-  while(!DcsBios::tryToSendDcsBiosMessage("ARC210_FSK_UP 0", ""));
-  delay(1000);
-
+  while(!DcsBios::tryToSendDcsBiosMessage(msg, args));
 }
 
 unsigned int Radios::getArc210MasterMode() {
@@ -221,9 +230,6 @@ unsigned int Radios::getArc210SecondaryMode() {
   return arc210.selectedSecondarySwitch;
 }
 
-char* Radios::getUHF100MHz() {
-  return uhf.freq100MHz;
-}
 unsigned int Radios::getUHFMasterMode() {
   return uhf.selectedMasterSwitch;
 }

@@ -95,7 +95,10 @@ Radios radios;
 unsigned long currentMillis = 0;
 
 #include "arc210Cmd.h"
-// #include "uhfCmd.h"
+#include "uhfCmd.h"
+#include "vhfFmCmd.h"
+#include "ilsCmd.h"
+#include "tacanCmd.h"
 
 void setup(void) {
   // No serial available for Prod,
@@ -136,22 +139,22 @@ void loop(void) {
 
   // Arc 210, VHF AM/FM
   if (radios.getActivatedModule() == 0) {
-    arc210PushButton(pbCode);
+    arc210Commands(pbCode);
   }
   // UHF
   else if (radios.getActivatedModule() == 1) {
-    // uhfPushButton(pbCode);
+    uhfCommands(pbCode);
   }
   // VHF FM
   else if (radios.getActivatedModule() == 2) {
-
+    vhfFmCommands(pbCode);
   }
   // ILS
   else if (radios.getActivatedModule() == 3) {
-
+    ilsCommands(pbCode);
   }
   // TACAN
   else if (radios.getActivatedModule() == 4) {
-
+    tacanCommands(pbCode);
   }
 }

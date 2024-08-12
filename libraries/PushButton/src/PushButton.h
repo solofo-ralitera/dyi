@@ -10,6 +10,8 @@ L'appuie du boutton maintient le joystick appuyé jusqu'au relachement du bouton
 class PushButton
 {
   public:
+    PushButton();
+    
     PushButton(
       byte *i2cData,
       byte *i2cDataIndex
@@ -33,7 +35,7 @@ class PushButton
   private:
     byte *_i2cData;
     byte *_i2cDataIndex;
-    byte *lastStatus;
+    int lastStatus;
 };
 
 #endif

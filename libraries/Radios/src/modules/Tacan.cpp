@@ -1,6 +1,7 @@
 #include "TftDisplay.h"
 #include "Tacan.h"
 
+#define SECONDARY_TACAN_SWITCH_OFFSET 230
 
 Tacan::Tacan(TftDisplay* _display):
 title ("TACAN"),
@@ -21,16 +22,13 @@ masterSwitches {
     isActive = false;
 }
 
-void Tacan::begin() {
-}
-
-void Tacan::run() {
-}
-
 void Tacan::activate() {
     if (isActive == false) {
         display->printRadioFrequency(frequency);
-        display->printRadioSwitch(masterSwitches, numMasterSwitches, selectedMasterSwitch, 270);
+        display->printRadioSwitch(masterSwitches, numMasterSwitches, selectedMasterSwitch, SECONDARY_TACAN_SWITCH_OFFSET);
+        display->printTRHelp("-", "vol.");
+        display->printBCHelp("test");
+        display->drawVolume(volume);
     }
     isActive = true;
 }
@@ -40,13 +38,22 @@ void Tacan::deactivate() {
 }
 
 void Tacan::setFrequency(char* newValue) {
-    if (frequency == newValue) return;
+    // if (frequency == newValue) return;
     frequency = newValue;
     if (isActive) display->printRadioFrequency(frequency);
 }
 
 void Tacan::setSelectedMasterSwitch(unsigned int newValue) {
-    if (selectedMasterSwitch == newValue) return;
+    // if (selectedMasterSwitch == newValue) return;
     selectedMasterSwitch = newValue;
-    if (isActive) display->printRadioSwitch(masterSwitches, numMasterSwitches, selectedMasterSwitch, 270);
+    if (isActive) display->printRadioSwitch(masterSwitches, numMasterSwitches, selectedMasterSwitch, SECONDARY_TACAN_SWITCH_OFFSET);
+}
+
+void Tacan::setVolume(int newValue) {
+    volume = newValue;
+    if (isActive) display->drawVolume(volume);
+}
+
+void Tacan::setTest(unsigned int newValue) {
+    if (isActive) display->drawTacanTest(newValue);
 }

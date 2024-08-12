@@ -12,9 +12,6 @@ class VhfFm
     const char *title;
     bool isActive;
 
-    void begin();
-    void run();
-
     void activate();
     void deactivate();
 
@@ -22,12 +19,15 @@ class VhfFm
     void setFrequency(char* newValue);
     void setSelectedMasterSwitch(unsigned int newValue);
     void setSelectedSecondarySwitch(unsigned int newValue);
-    
+    void setVolume(int newValue);
+    void setSql(unsigned int newValue);
   private:
     TftDisplay* display;
 
     char* channel;
     char* frequency;
+    int volume;
+    unsigned int sql;  
 
     unsigned int selectedMasterSwitch;
     const unsigned int numMasterSwitches;
