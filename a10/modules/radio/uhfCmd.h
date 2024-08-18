@@ -79,17 +79,25 @@ void uhfCommands(int pbCode) {
   static PushButton fskUpper;
   fskUpper.runCallBack(pbCode == PB_TOP_SCREEN ? 0 : 1, []() {
     radios.sendDcsCommand("UHF_T_TONE", "0");
-  }, []() {});
+  });
   
   static PushButton fskMiddle;
   fskMiddle.runCallBack(pbCode == PB_MIDDLE_SCREEN ? 0 : 1, []() {
     radios.sendDcsCommand("UHF_T_TONE", "1");
-  }, []() {});
+  });
 
   static PushButton fskLower;
   fskLower.runCallBack(pbCode == PB_BOTTOM_SCREEN ? 0 : 1, []() {
     radios.sendDcsCommand("UHF_T_TONE", "2");
-  }, []() {});
+  });
+
+  static PushButton micSwitchDown;
+  static PushButton micSwitchDownJoy(I2C_DATA, BUTTON_INDEX[BTN_MIC_SWITCH_DOWN]);  
+  micSwitchDown.runCallBack(pbCode == PB_MOD_SELECTOR ? 0 : 1, []() {
+    micSwitchDownJoy.run(0);
+  }, []() {
+    micSwitchDownJoy.run(1);
+  });
 }
 #endif
 

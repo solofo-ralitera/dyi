@@ -9,11 +9,11 @@ class Uhf
   public:
     Uhf(TftDisplay*);
 
-    const char *title;
-    bool isActive;
+    const char *title = "UHF";
+    bool isActive = false;
 
-    unsigned int selectedMasterSwitch;
-    unsigned int selectedSecondarySwitch;
+    unsigned int selectedMasterSwitch = 0;
+    unsigned int selectedSecondarySwitch = 0;
 
     void activate();
     void deactivate();
@@ -27,16 +27,25 @@ class Uhf
   private:
     TftDisplay* display;
 
-    char* channel;
-    char* frequency;
-    int volume;
+    char* channel = "--";
+    char* frequency = "XXX.XXX";
+    int volume = 0;
     unsigned int sql;  
 
-    const unsigned int numMasterSwitches;
-    String masterSwitches[4];
+    const unsigned int numMasterSwitches = 4;
+    String masterSwitches[4] = {
+        "OFF",
+        "MAIN",
+        "BOTH",
+        "ADF",
+    };
 
-    const unsigned int numSecondarySwitches;
-    String secondarySwitches[3];
+    const unsigned int numSecondarySwitches = 3;
+    String secondarySwitches[3] = {
+        "MNL",
+        "PRESET",
+        "GRD",
+    };
 };
 
 #endif

@@ -74,6 +74,14 @@ void vhfFmCommands(int pbCode) {
   }, []() {
     radios.sendDcsCommand("VHFFM_LOAD", "0");
   });
+
+  static PushButton micSwitchAft;
+  static PushButton micSwitchAftJoy(I2C_DATA, BUTTON_INDEX[BTN_MIC_SWITCH_AFT]);  
+  micSwitchAft.runCallBack(pbCode == PB_MOD_SELECTOR ? 0 : 1, []() {
+    micSwitchAftJoy.run(0);
+  }, []() {
+    micSwitchAftJoy.run(1);
+  });
 }
 #endif
 

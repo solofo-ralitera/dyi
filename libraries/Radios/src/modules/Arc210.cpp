@@ -7,38 +7,8 @@
 
 #define SECONDARY_ARC210_SWITCH_OFFSET 220
 
-Arc210::Arc210(TftDisplay* _display):
-title ("VHF"),
-numMasterSwitches (7),
-masterSwitches {
-    "OFF",
-    "TR G",
-    "TR",
-    "ADF",
-    "CHG PRST",
-    "TEST",
-    "ZERO",
-},
-numSecondarySwitches (7),
-secondarySwitches {
-    "ECCM MTR",
-    "ECCM",
-    "PRST",
-    "MAN",
-    "MAR",
-    "243",
-    "121",
-}
-{
+Arc210::Arc210(TftDisplay* _display) {
     display = _display;
-    channel = "xx";
-    frequency = "XXXXXXX";
-    modulation = "xx";
-    sql = 0;
-    selectedMasterSwitch = 0;
-    selectedSecondarySwitch = 0;
-
-    isActive = false;
 }
 
 void Arc210::activate() {
@@ -48,8 +18,9 @@ void Arc210::activate() {
         display->printRadioModulation(modulation);
         display->printRadioSwitch(masterSwitches, numMasterSwitches, selectedMasterSwitch, 0);
         display->printRadioSwitch(secondarySwitches, numSecondarySwitches, selectedSecondarySwitch, SECONDARY_ARC210_SWITCH_OFFSET);
-        display->printTRHelp("sql", "-");
+        display->printTRHelp("sql", "vol.");
         display->drawRadioSql(sql);
+        display->drawVolume(volume);
     }
     isActive = true;
 }
@@ -95,4 +66,9 @@ void Arc210::setSelectedSecondarySwitch(unsigned int newValue) {
 void Arc210::setSql(unsigned int newValue) {
     sql = newValue;
     if (isActive) display->drawRadioSql(sql);
+}
+
+void Arc210::setVolume(int newValue) {
+    volume = newValue;
+    if (isActive) display->drawVolume(volume);
 }

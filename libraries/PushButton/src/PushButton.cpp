@@ -52,3 +52,16 @@ void PushButton::runCallBack(byte pinStatus, void (*pressCallback)(), void (*rel
     }
   }
 }
+
+void PushButton::runCallBack(byte pinStatus, void (*pressCallback)()) {
+  if (pinStatus == 0) {
+    if (lastStatus == 0) {
+      pressCallback();
+      lastStatus = 1;
+    } else {
+      if (lastStatus == 1) {
+        lastStatus = 0;
+      }
+    }
+  }
+}

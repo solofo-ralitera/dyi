@@ -36,7 +36,7 @@ void VhfFm::activate() {
         display->printRadioSwitch(masterSwitches, numMasterSwitches, selectedMasterSwitch, 0);
         display->printRadioSwitch(secondarySwitches, numSecondarySwitches, selectedSecondarySwitch, 280);
         display->printTRHelp("sql", "vol.");
-         display->drawVolume(volume);
+        display->drawVolume(volume);
         display->drawRadioSql(sql);
    }
     isActive = true;

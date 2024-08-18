@@ -122,6 +122,13 @@ void arc210Commands(int pbCode) {
   });
 
   // Blanc -> volume knob n/a
+  // Use intercom VHF volume
+  static KnobJoy volume(I2C_DATA, 39, 38);
+  volume.runCallBack([]() {
+    radios.sendDcsCommand("INT_VHF_VOL", "-3200");
+  }, []() {
+    radios.sendDcsCommand("INT_VHF_VOL", "+3200");
+  });
 
   // Noir
   static KnobJoy squelch(I2C_DATA, 41, 40);
@@ -137,6 +144,14 @@ void arc210Commands(int pbCode) {
     radios.sendDcsCommand("ARC210_25KHZ_SEL", "DEC");
   }, []() {
     radios.sendDcsCommand("ARC210_25KHZ_SEL", "INC");
+  });
+
+  static PushButton micSwitchFwd;
+  static PushButton micSwitchFwdJoy(I2C_DATA, BUTTON_INDEX[BTN_MIC_SWITCH_FWD]);  
+  micSwitchFwd.runCallBack(pbCode == PB_MOD_SELECTOR ? 0 : 1, []() {
+    micSwitchFwdJoy.run(0);
+  }, []() {
+    micSwitchFwdJoy.run(1);
   });
 }
 #endif

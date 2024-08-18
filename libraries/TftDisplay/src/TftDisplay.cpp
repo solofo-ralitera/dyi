@@ -26,6 +26,10 @@ void TftDisplay::clearScreen() {
     tft.fillScreen(TFT_BLACK);
 }
 
+void TftDisplay::clearRect(int x, int y, int w, int h) {
+    tft.fillRect(x, y, w, h, TFT_BLACK);
+}
+
 void TftDisplay::print(char *text, int col, int row, uint8_t size, int color, int bgColor = TFT_BLACK)
 {
     tft.setTextSize(size);
@@ -35,43 +39,34 @@ void TftDisplay::print(char *text, int col, int row, uint8_t size, int color, in
     tft.println(text);
 }
 
-void TftDisplay::printRadioTitle(int activeIndex, char *text1, char *text2, char *text3, char *text4, char *text5) {
-    // Arc-210
-    print(text1, 0, 13, activeIndex == 0 ? 2 : 1, activeIndex == 0 ? TFT_DARK_SPRING_GREEN : TFT_DARKGREY);
-    // UHF
-    print(text2, 64, 13, activeIndex == 1 ? 2 : 1, activeIndex == 1 ? TFT_DARK_SPRING_GREEN : TFT_DARKGREY);
-    // VHF FM
-    print(text3, 120, 13, activeIndex == 2 ? 2 : 1, activeIndex == 2 ? TFT_DARK_SPRING_GREEN : TFT_DARKGREY);
-    // ILS
-    print(text4, 205, 13, activeIndex == 3 ? 2 : 1, activeIndex == 3 ? TFT_DARK_SPRING_GREEN : TFT_DARKGREY);
-    // TACAN
-    print(text5, 256, 13, activeIndex == 4 ? 2 : 1, activeIndex == 4 ? TFT_DARK_SPRING_GREEN : TFT_DARKGREY);
+void TftDisplay::printRadioTitle(char *text) {
+    print(text, 10, 13, 2, TFT_DARK_SPRING_GREEN);
 }
 
 void TftDisplay::printTRHelp(const char* text1, const char* text2) {
-    print(text1, 250, 35, 1, TFT_DARKGREY);
-    print(text2, 290, 35, 1, TFT_DARKGREY);
+    print(text1, 200, 15, 2, TFT_DARKGREY);
+    print(text2, 260, 15, 2, TFT_DARKGREY);
 }
 
 void TftDisplay::drawVolume(int volume) {
-    tft.drawLine(290, 45, 320, 45, TFT_BLACK); // erase old indicator
-    tft.drawLine(290, 45, (volume * 30 / 100) + 290, 45, TFT_DARKGREEN);
+    tft.drawLine(260, 33, 320, 33, TFT_BLACK); // erase old indicator
+    tft.drawLine(260, 33, (volume * 60 / 100) + 260, 33, TFT_DARKGREEN);
 }
 
 void TftDisplay::drawRadioSql(unsigned int sql) {
-    tft.drawRect(247, 33, 23, 13, sql == 1 ? TFT_DARK_SPRING_GREEN : TFT_BLACK);
+    tft.drawRect(197, 11, 39, 23, sql == 1 ? TFT_DARK_SPRING_GREEN : TFT_BLACK);
 }
 
 void TftDisplay::printBCHelp(const char* text) {
-    print(text, 130, 220, 1, TFT_DARKGREY);
+    print(text, 130, 220, 2, TFT_DARKGREY);
 }
 
-void TftDisplay::drawTacanTest(unsigned int test) {
-    tft.drawRect(125, 219, 33, 15, test == 1 ? TFT_DARK_SPRING_GREEN : TFT_BLACK);
+void TftDisplay::highLightBCHelp(unsigned int highlight) {
+    tft.drawRect(125, 217, 57, 20, highlight == 1 ? TFT_DARK_SPRING_GREEN : TFT_BLACK);
 }
 
 void TftDisplay::printRadioChannel(char *text) {
-    print(text, 120, 180, 4, TFT_DARK_SPRING_GREEN);
+    print(text, 120, 207, 4, TFT_DARK_SPRING_GREEN);
     /* if (text != "") {
         // char buf[6];
         // strcpy(buf, "ch ");
@@ -102,4 +97,17 @@ void TftDisplay::printRadioSwitch(String switches[], unsigned int numSwitches, u
             print(buff, offsetPrint, 220 - (n * 18), 2, TFT_DARKGREY);
         }
     }
+}
+
+void TftDisplay::printIntercomCircle(int offsetX, int offsetY, unsigned int unmute) {
+    tft.drawCircle(offsetX + 40, offsetY + 60, 25, unmute == 1 ? TFT_DARK_SPRING_GREEN : TFT_DARKGREY);
+
+}
+void TftDisplay::printIntercomText(const char *text, int offsetX, int offsetY, unsigned int unmute) {
+    print(text, offsetX + 23, offsetY + 50, 2, unmute == 1 ? TFT_DARK_SPRING_GREEN : TFT_DARKGREY);
+}
+
+void TftDisplay::printIntercomVolume(int offsetX, int offsetY, unsigned int volume, unsigned int unmute) {
+    tft.drawLine(offsetX + 18, offsetY + 67, offsetX + 62, offsetY + 67, TFT_BLACK); // erase old indicator
+    tft.drawLine(offsetX + 18, offsetY + 67, offsetX + 18 + (volume * 44 / 100), offsetY + 67, unmute == 1 ? TFT_DARK_SPRING_GREEN : TFT_DARKGREY);
 }

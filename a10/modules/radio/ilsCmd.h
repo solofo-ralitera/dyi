@@ -28,9 +28,9 @@ void ilsCommands(int pbCode) {
 
   static KnobJoy volume(I2C_DATA, 39, 38);
   volume.runCallBack([]() {
-    radios.sendDcsCommand("ILS_VOL", "-5000");
+    radios.sendDcsCommand("ILS_VOL", "-3200");
   }, []() {
-    radios.sendDcsCommand("ILS_VOL", "+5000");
+    radios.sendDcsCommand("ILS_VOL", "+3200");
   });
 }
 #endif

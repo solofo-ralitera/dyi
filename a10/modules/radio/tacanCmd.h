@@ -35,9 +35,9 @@ void tacanCommands(int pbCode) {
 
   static KnobJoy volume(I2C_DATA, 39, 38);
   volume.runCallBack([]() {
-    radios.sendDcsCommand("TACAN_VOL", "-1500");
+    radios.sendDcsCommand("TACAN_VOL", "-3200");
   }, []() {
-    radios.sendDcsCommand("TACAN_VOL", "+1500");
+    radios.sendDcsCommand("TACAN_VOL", "+3200");
   });
 
   static PushButton load;

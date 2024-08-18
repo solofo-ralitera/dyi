@@ -55,5 +55,5 @@ void Tacan::setVolume(int newValue) {
 }
 
 void Tacan::setTest(unsigned int newValue) {
-    if (isActive) display->drawTacanTest(newValue);
+    if (isActive) display->highLightBCHelp(newValue);
 }

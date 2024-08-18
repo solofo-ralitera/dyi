@@ -30,6 +30,12 @@ class Radios
     char* getUHF100MHz();
     unsigned int getUHFMasterMode();
     unsigned int getUHFSecondaryMode();
+
+    void displayCheckListsTopScreenBtn();
+    void displayCheckListsMiddleScreenBtn();
+    void displayCheckListsBottomScreenBtn();
+    void displayCheckListsMenuBtn();
+    void displayCheckListsPage(int page);
 };
 
 #endif

@@ -1,3 +1,4 @@
+#include "Keyboard.h"
 #include "SlaveModule.h"
 
 Joystick_ joystick (JOYSTICK_DEFAULT_REPORT_ID, JOYSTICK_TYPE_JOYSTICK,
@@ -17,6 +18,8 @@ Joystick_ joystick (JOYSTICK_DEFAULT_REPORT_ID, JOYSTICK_TYPE_JOYSTICK,
 
 void setup() {
   // Serial.begin(9600);
+
+  Keyboard.begin();
 
   // Set full axes
   joystick.setXAxisRange(-127, 127);
@@ -72,4 +75,7 @@ void loop() {
   static SlaveModule ahcpAndLandingGear(4, 3, 51, 21, ahcpDataI2CConfig);
   ahcpAndLandingGear.readModule(&joystick);
 
+  static int radioDataI2CConfig[1] = {CMD_BTN};
+  static SlaveModule radio(5, 1, 72, 3, radioDataI2CConfig);
+  radio.readModule(&joystick);
 }
