@@ -40,7 +40,7 @@ class PushButton
   private:
     byte *_i2cData;
     byte *_i2cDataIndex;
-    int lastStatus;
+    int lastStatus = 0;
 };
 
 #endif

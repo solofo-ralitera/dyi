@@ -15,7 +15,7 @@ void checklistsCommands(int pbCode) {
   });
 
   static PushButton bottomScreen;
-  topScreen.runCallBack(pbCode == PB_BOTTOM_SCREEN ? 0 : 1, []() {
+  bottomScreen.runCallBack(pbCode == PB_BOTTOM_SCREEN ? 0 : 1, []() {
     radios.displayCheckListsBottomScreenBtn();
   });
 

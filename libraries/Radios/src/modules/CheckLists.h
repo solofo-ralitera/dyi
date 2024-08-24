@@ -24,14 +24,14 @@ class CheckLists {
         void clearScreen();
         void manageScreenBtn(const char* btn);
         void printCurrentMenu();
-            void printPreStartup();
+            void printPreFlight();
                 // Preflight
                 // cold = "": cold and dark start
                 // colr = "h" hot start (eg takeoff)
                 // cold = "a" air start
                 void printPreFlightPage1(const char* cold = "");
                 void printPreFlightPage2(const char* cold = "");
-
+            void printStartup();
         const char* getColdChar(const char* cold, const char* coldChar, const char* hotChar, const char* airChar);
         
             

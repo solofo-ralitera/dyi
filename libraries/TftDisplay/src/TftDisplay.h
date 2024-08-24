@@ -38,6 +38,8 @@ class TftDisplay
     void printIntercomCircle(int offsetX, int offsetY, unsigned int unmute);
     void printIntercomText(const char *text, int offsetX, int offsetY, unsigned int unmute);
     void printIntercomVolume(int offsetX, int offsetY, unsigned int volume, unsigned int unmute);
+
+    void clearChecklistScreen();
 };
 
 #endif

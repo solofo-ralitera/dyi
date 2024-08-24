@@ -3,7 +3,6 @@
 
 PushButton::PushButton()
 {
-  lastStatus = 0;
 }
 
 PushButton::PushButton(
@@ -58,10 +57,10 @@ void PushButton::runCallBack(byte pinStatus, void (*pressCallback)()) {
     if (lastStatus == 0) {
       pressCallback();
       lastStatus = 1;
-    } else {
-      if (lastStatus == 1) {
-        lastStatus = 0;
-      }
+    }
+  } else {
+    if (lastStatus == 1) {
+      lastStatus = 0;
     }
   }
 }

@@ -111,3 +111,10 @@ void TftDisplay::printIntercomVolume(int offsetX, int offsetY, unsigned int volu
     tft.drawLine(offsetX + 18, offsetY + 67, offsetX + 62, offsetY + 67, TFT_BLACK); // erase old indicator
     tft.drawLine(offsetX + 18, offsetY + 67, offsetX + 18 + (volume * 44 / 100), offsetY + 67, unmute == 1 ? TFT_DARK_SPRING_GREEN : TFT_DARKGREY);
 }
+
+void TftDisplay::clearChecklistScreen() {
+    // Clear sub title
+    clearRect(130, 0, 170, 30);
+    // Clear content
+    clearRect(0, 30, 320, 210);
+}
