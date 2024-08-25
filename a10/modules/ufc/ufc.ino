@@ -117,7 +117,6 @@ void getPBCode(int analogValue, int *numSample, int samples[], int *analogMean) 
     }
     *analogMean = sum / ANALOG_SAMPLE;
   }
-  // Serial.println(*analogMean);
 }
 
 void setup() {
@@ -224,7 +223,7 @@ void loop() {
   ufc7.run((analogMeanUfcLeft >= 184 && analogMeanUfcLeft <= 188) ? 0 : 1);
 
   static PushButton ufc8(I2C_DATA, BUTTON_INDEX[UFC_8_KEY]);
-  ufc8.run((analogMeanUfcLeft >= 153 && analogMeanUfcLeft <= 157) ? 0 : 1);
+  ufc8.run((analogMeanUfcLeft >= 161 && analogMeanUfcLeft <= 165) ? 0 : 1);
 
   static PushButton ufc9(I2C_DATA, BUTTON_INDEX[UFC_9_KEY]);
   ufc9.run((analogMeanUfcLeft >= 102 && analogMeanUfcLeft <= 106) ? 0 : 1);
