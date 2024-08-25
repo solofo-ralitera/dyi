@@ -78,4 +78,9 @@ void loop() {
   static int radioDataI2CConfig[1] = {CMD_BTN};
   static SlaveModule radio(5, 1, 72, 3, radioDataI2CConfig);
   radio.readModule(&joystick);
+
+  // Ufc 35 btns
+  static int ufcDataI2CConfig[5] = {CMD_BTN, CMD_BTN, CMD_BTN, CMD_BTN, CMD_BTN};
+  static SlaveModule ufc(6, 5, 75, 35, ufcDataI2CConfig);
+  ufc.readModule(&joystick);
 }
