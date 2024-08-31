@@ -3,32 +3,19 @@
 
 #define SECONDARY_TACAN_SWITCH_OFFSET 230
 
-Tacan::Tacan(TftDisplay* _display):
-title ("TACAN"),
-numMasterSwitches (5),
-masterSwitches {
-    "OFF",
-    "REC",
-    "T/R",
-    "A/A Rec",
-    "A/A T/R",
-}
+Tacan::Tacan(TftDisplay* _display)
 {
     display = _display;
-    frequency = "XXXX";
-
-    selectedMasterSwitch = 0;
-
-    isActive = false;
 }
 
 void Tacan::activate() {
     if (isActive == false) {
         display->printRadioFrequency(frequency);
         display->printRadioSwitch(masterSwitches, numMasterSwitches, selectedMasterSwitch, SECONDARY_TACAN_SWITCH_OFFSET);
-        display->printTRHelp("-", "vol.");
+        display->printTRHelp("Ton", "vol.");
         display->printBCHelp("test");
         display->drawVolume(volume);
+        display->drawRadioSql(tone);
     }
     isActive = true;
 }
@@ -56,4 +43,9 @@ void Tacan::setVolume(int newValue) {
 
 void Tacan::setTest(unsigned int newValue) {
     if (isActive) display->highLightBCHelp(newValue);
+}
+
+void Tacan::setTone(unsigned int newValue) {
+    tone = newValue;
+    if (isActive) display->drawRadioSql(tone);
 }

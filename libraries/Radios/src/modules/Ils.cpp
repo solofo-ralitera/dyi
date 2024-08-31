@@ -2,29 +2,18 @@
 #include "Ils.h"
 
 
-Ils::Ils(TftDisplay* _display):
-title ("ILS"),
-numMasterSwitches (2),
-masterSwitches {
-    "OFF",
-    "PWR",
-}
-{
+Ils::Ils(TftDisplay* _display) {
     display = _display;
-    frequency = "XXXXXX";
-
-    selectedMasterSwitch = 0;
-    volume = 0;
-    isActive = false;
 }
 
 void Ils::activate() {
     if (isActive == false) {
         display->printRadioFrequency(frequency);
         display->printRadioSwitch(masterSwitches, numMasterSwitches, selectedMasterSwitch, 0);
-        display->printTRHelp("-", "vol.");
+        display->printTRHelp("Ton", "vol.");
         display->drawVolume(volume);
-    }
+        display->drawRadioSql(tone);
+   }
     isActive = true;
 }
 
@@ -47,4 +36,9 @@ void Ils::setSelectedMasterSwitch(unsigned int newValue) {
 void Ils::setVolume(int newValue) {
     volume = newValue;
     if (isActive) display->drawVolume(volume);
+}
+
+void Ils::setTone(unsigned int newValue) {
+    tone = newValue;
+    if (isActive) display->drawRadioSql(tone);
 }

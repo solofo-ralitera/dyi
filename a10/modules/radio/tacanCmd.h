@@ -33,6 +33,13 @@ void tacanCommands(int pbCode) {
     radios.sendDcsCommand("TACAN_MODE", "INC");
   });
 
+  static KnobJoy squelch(I2C_DATA, 41, 40);
+  squelch.runCallBack([]() {
+    radios.sendDcsCommand("INT_TCN_UNMUTE", "0");
+  }, []() {
+    radios.sendDcsCommand("INT_TCN_UNMUTE", "1");
+  }); 
+
   static KnobJoy volume(I2C_DATA, 39, 38);
   volume.runCallBack([]() {
     radios.sendDcsCommand("TACAN_VOL", "-3200");

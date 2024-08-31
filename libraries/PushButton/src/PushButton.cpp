@@ -17,11 +17,15 @@ PushButton::PushButton(
 
 void PushButton::run(byte pinStatus) {
   if (pinStatus == 0) {
-    // Serial.println("Push");
-    bitSet(_i2cData[_i2cDataIndex[0]], _i2cDataIndex[1]);
+    if (lastStatus == 0) {
+      bitSet(_i2cData[_i2cDataIndex[0]], _i2cDataIndex[1]);
+      lastStatus = 1;
+    }
   } else {
-    // Serial.println("Release");
-    bitClear(_i2cData[_i2cDataIndex[0]], _i2cDataIndex[1]);
+    if (lastStatus == 1) {
+      bitClear(_i2cData[_i2cDataIndex[0]], _i2cDataIndex[1]);
+      lastStatus = 0;
+    }
   }
 }
 

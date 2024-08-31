@@ -9,8 +9,8 @@ class Tacan
   public:
     Tacan(TftDisplay*);
 
-    const char *title;
-    bool isActive;
+    const char *title = "TACAN";
+    bool isActive = false;
 
     void activate();
     void deactivate();
@@ -19,15 +19,24 @@ class Tacan
     void setSelectedMasterSwitch(unsigned int newValue);
     void setVolume(int newValue);
     void setTest(unsigned int newValue);
+    void setTone(unsigned int newValue);
+
   private:
     TftDisplay* display;
 
-    char* frequency;
-
-    unsigned int selectedMasterSwitch;
-    const unsigned int numMasterSwitches;
+    char* frequency = "XXXX";
     int volume = 0;
-    String masterSwitches[5];
+    unsigned int tone = 0;  
+
+    unsigned int selectedMasterSwitch = 0;
+    const unsigned int numMasterSwitches = 5;
+    String masterSwitches[5] = {
+        "OFF",
+        "REC",
+        "T/R",
+        "A/A Rec",
+        "A/A T/R",
+    };
 };
 
 #endif

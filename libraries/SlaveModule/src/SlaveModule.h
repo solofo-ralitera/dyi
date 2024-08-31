@@ -35,7 +35,8 @@ class SlaveModule
         );
 
         void readModule(
-            Joystick_* joystick
+            Joystick_* joystick,
+            int code = 0
         );
 
         void setBitAsJoystickStatus(
@@ -48,7 +49,7 @@ class SlaveModule
         int i2CBufferSize;
         int numberOfFirstButton;
         int numberOfButtons;
-        uint32_t lastButtonsState[8]; // max 64 buttons per module
+        uint32_t lastButtonsState[4] = { 0,0,0,0 }; // max 128 (32*4) buttons per module
         int *lasteDataI2CConfig;
 };
 

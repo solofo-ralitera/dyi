@@ -9,8 +9,8 @@ class VhfFm
   public:
     VhfFm(TftDisplay*);
 
-    const char *title;
-    bool isActive;
+    const char *title = "VHF FM";
+    bool isActive = false;
 
     void activate();
     void deactivate();
@@ -24,18 +24,27 @@ class VhfFm
   private:
     TftDisplay* display;
 
-    char* channel;
-    char* frequency;
-    int volume;
+    char* channel = "xx";
+    char* frequency = "XXXXXXX";
+    int volume = 0;
     unsigned int sql;  
 
-    unsigned int selectedMasterSwitch;
-    const unsigned int numMasterSwitches;
-    String masterSwitches[4];
+    unsigned int selectedMasterSwitch = 0;
+    const unsigned int numMasterSwitches = 4;
+    String masterSwitches[4] = {
+        "FM",
+        "AM",
+        "MAN",
+        "PRE",
+    };
 
-    unsigned int selectedSecondarySwitch;
-    const unsigned int numSecondarySwitches;
-    String secondarySwitches[3];
+    unsigned int selectedSecondarySwitch = 0;
+    const unsigned int numSecondarySwitches = 3;
+    String secondarySwitches[3] = {
+        "OFF",
+        "TR",
+        "DF",
+    };
 };
 
 #endif

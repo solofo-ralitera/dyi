@@ -1,9 +1,11 @@
 /*******************************
 Front UFC Panel (35 btns)
+Nmsp
 *******************************/
 
 #include <Wire.h>
 #include "PushButton.h"
+#include "AutoReleaseSwitch.h"
 
 // Adresse I2C du module
 #define I2C_ADDRESS 6
@@ -26,6 +28,7 @@ byte I2C_DATA[BUFFER_SIZE] = {
 #define UFC_5_KEY 5 // 
 #define UFC_6_KEY 6 // 
 #define UFC_7_KEY 7 // 
+
 #define UFC_8_KEY 8 // 
 #define UFC_9_KEY 9 // 
 #define UFC_ALT_KEY 10
@@ -34,6 +37,7 @@ byte I2C_DATA[BUFFER_SIZE] = {
 #define UFC_COMM_2 13 // 
 #define UFC_DATA_DOWN 14
 #define UFC_DATA_UP 15
+
 #define UFC_DEPR_DOWN 16
 #define UFC_DEPR_UP 17
 #define UFC_ENT 18 // 
@@ -42,6 +46,7 @@ byte I2C_DATA[BUFFER_SIZE] = {
 #define UFC_INTEN_DECREASE 21
 #define UFC_INTEN_INCREASE 22
 #define UFC_LTR 23 // 
+
 #define UFC_MASTER_CAUTION 24
 #define UFC_MK 25 // 
 #define UFC_SEL_DOWN 26
@@ -50,15 +55,16 @@ byte I2C_DATA[BUFFER_SIZE] = {
 #define UFC_STEER_DOWN 29 //
 #define UFC_STEER_UP 30 // 
 #define UFC_ALT_ALTR 31 //!!!!!
+
 #define UFC_COM_SEC 32 //!!!!!
 #define UFC_ECCM 33 //!!!!!
 #define UFC_IFF 34 //!!!!!
 #define UFC_IDM 35 //!!!!!
-
 #define NMSP_PTR 36
 #define NMSP_HARS 37
 #define NMSP_EGI 38
 #define NMSP_TISL 39
+
 #define NMSP_STRPT 40
 #define NMSP_ANCHR 41
 #define NMSP_TCN 42
@@ -66,7 +72,7 @@ byte I2C_DATA[BUFFER_SIZE] = {
 
 
 // Index de chaque boutton dans I2C_DATA (row, col)
-byte BUTTON_INDEX[43][2] = {
+byte BUTTON_INDEX[44][2] = {
   {0, 0},
   {0, 1},
   {0, 2},
@@ -110,6 +116,7 @@ byte BUTTON_INDEX[43][2] = {
   {5, 0},
   {5, 1},
   {5, 2},
+  {5, 3},
 };
 
 #define ANALOG_SAMPLE 15
@@ -160,6 +167,8 @@ void requestEvent()
 }
 
 void loop() {
+  static unsigned long currentMillis;
+  currentMillis = millis();
 
   static int numSampleUfcRight = 0;
   static int samplesUfcRight[ANALOG_SAMPLE];
@@ -177,8 +186,9 @@ void loop() {
   getPBCode(analogRead(A6), &numSampleNmsp, samplesNmsp, &analogMeanNmsp, 146, 150);
 
   // NMSP
-  static PushButton ptr(I2C_DATA, BUTTON_INDEX[NMSP_PTR]);  
-  ptr.run(bitRead(PIND, PIND4));
+  // D4
+  static AutoReleaseSwitch ptr(bitRead(PIND, PIND4), I2C_DATA, BUTTON_INDEX[NMSP_PTR]);
+  ptr.run(bitRead(PIND, PIND4), &currentMillis, BUTTON_INDEX[NMSP_PTR]);
 
   static PushButton hars(I2C_DATA, BUTTON_INDEX[NMSP_HARS]);  
   hars.run((analogMeanNmsp >= 193 && analogMeanNmsp <= 197) ? 0 : 1);

@@ -180,6 +180,9 @@ DcsBios::IntegerBuffer ilsMasterSwitchBuffer(A_10C_ILS_PWR, [](unsigned int newV
 DcsBios::IntegerBuffer ilsVolumeBuffer(A_10C_ILS_VOL, [](unsigned int newValue) {
   ils.setVolume(map(newValue, 0, 65535, 0, 100));
 });
+DcsBios::IntegerBuffer ilsToneBuffer(A_10C_INT_ILS_UNMUTE, [](unsigned int newValue) {
+  ils.setTone(newValue);
+});
 ///////////// TACAN ////////////////////
 DcsBios::StringBuffer<4> tacanFrequencyBuffer(A_10C_TACAN_CHANNEL, [](char* newValue) {
   tacan.setFrequency(newValue);
@@ -192,6 +195,9 @@ DcsBios::IntegerBuffer tacanVolumeBuffer(A_10C_TACAN_VOL, [](unsigned int newVal
 });
 DcsBios::IntegerBuffer tacanTestBuffer(A_10C_TACAN_TEST, [](unsigned int newValue) {
   tacan.setTest(newValue);
+});
+DcsBios::IntegerBuffer tacanToneBuffer(A_10C_INT_TCN_UNMUTE, [](unsigned int newValue) {
+  tacan.setTone(newValue);
 });
 ///////////// INTERCOM ////////////////////
 DcsBios::IntegerBuffer intercomSecSwitchBuffer(A_10C_INT_MODE, [](unsigned int newValue) {

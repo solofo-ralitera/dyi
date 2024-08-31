@@ -2,31 +2,8 @@
 #include "VhfFm.h"
 
 
-VhfFm::VhfFm(TftDisplay* _display):
-title ("VHF FM"),
-numMasterSwitches (4),
-masterSwitches {
-    "FM",
-    "AM",
-    "MAN",
-    "PRE",
-},
-numSecondarySwitches (3),
-secondarySwitches {
-    "OFF",
-    "TR",
-    "DF",
-}
-{
+VhfFm::VhfFm(TftDisplay* _display) {
     display = _display;
-    channel = "xx";
-    frequency = "XXXXXXX";
-
-    selectedMasterSwitch = 0;
-    selectedSecondarySwitch = 0;
-    volume = 0;
-
-    isActive = false;
 }
 
 void VhfFm::activate() {
