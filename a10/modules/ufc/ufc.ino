@@ -201,7 +201,6 @@ void loop() {
   static PushButton ils(I2C_DATA, BUTTON_INDEX[NMSP_ILS]);  
   ils.run((analogMeanNmsp >= 317 && analogMeanNmsp <= 321) ? 0 : 1);
 
-
   //////// Ufc right part
   static PushButton deprUp(I2C_DATA, BUTTON_INDEX[UFC_DEPR_UP]);  
   deprUp.run((analogMeanUfcRight >= 504 && analogMeanUfcRight <= 508) ? 0 : 1);
