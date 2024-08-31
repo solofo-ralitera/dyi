@@ -8,8 +8,9 @@ Front UFC Panel (35 btns)
 // Adresse I2C du module
 #define I2C_ADDRESS 6
 // Taille des données I2C à tranmettre (en bytes)
-#define BUFFER_SIZE 5
+#define BUFFER_SIZE 6
 byte I2C_DATA[BUFFER_SIZE] = {
+  B00000000,
   B00000000,
   B00000000,
   B00000000,

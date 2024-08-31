@@ -81,6 +81,6 @@ void loop() {
 
   // Ufc 44 btns
   static int ufcDataI2CConfig[5] = {CMD_BTN, CMD_BTN, CMD_BTN, CMD_BTN, CMD_BTN};
-  static SlaveModule ufc(6, 5, 75, 44, ufcDataI2CConfig);
+  static SlaveModule ufc(6, 6, 75, 44, ufcDataI2CConfig);
   ufc.readModule(&joystick);
 }
