@@ -4,13 +4,13 @@
 #include "LedControl.h"
 /**********************************************
     |0, 0|0, 1|0, 2|0,3 |0, 4|0, 5|0, 6|0, 7|
-    |1, 0|1, 1|    |    |    |    |1, 6|1, 7|
-    |2,  |    |    |    |    |    |    |    |
+    |1, 0|1, 1|    |    |    |1, 5|1, 6|1, 7|
+    |2,  |    |    |    |    |2, 5|    |    |
     |3   |    |    |    |    |    |    |    |
     |4   |    |    |    |    |    |    |    |
-    |5, 0|5, 1|5   |5   |5   |5   |5   |5   |
-    |6, 0|6, 1|6   |6   |6   |6   |6   |6   |
-    |7, 0|7, 1|    |    |    |    |    |    |
+    |5, 0|5, 1|5, 2|5   |5   |5   |5   |5   |
+    |6, 0|6, 1|6, 2|6, 3|6   |6   |6   |6   |
+    |7, 0|7, 1|7, 2|7, 3|    |    |    |    |
 **********************************************/
 //// Landing Gear & Flap panel
 #define LED_MATRIX_LANDING_GEAR_L_SAFE 0, 7, 0 // Yellow
@@ -18,6 +18,12 @@
 #define LED_MATRIX_LANDING_GEAR_R_SAFE 0, 7, 1 // Red
 #define LED_MATRIX_ANTISKID 0, 5, 0 // Brown
 #define LED_MATRIX_HANDLE_GEAR_WARNING 0, 6, 1 // Black/white
+#define LED_MATRIX_MASTER_CAUTION 0, 7, 2 // Grey, purple
+// Ext lights
+#define LED_MATRIX_EXT_STROBE_RIGHT 0, 5, 2 // Green Blue
+#define LED_MATRIX_EXT_POSITION_RIGHT 0, 6, 2 // Orange Yellow
+#define LED_MATRIX_EXT_STROBE_LEFT 0, 7, 3 // Green Blue
+#define LED_MATRIX_EXT_POSITION_LEFT 0, 6, 3 // Orange Yellow
 
 // SAS Panel
 #define LED_MATRIX_YAW_SAS_ENGAGE_L 0, 0, 7 // Orange
@@ -27,6 +33,16 @@
 
 // LASTE
 #define LED_MATRIX_EAC 0, 5, 1 // Red
+
+// NMSP
+#define LED_MATRIX_TISL 0, 0, 5 // Black
+#define LED_MATRIX_ILS 0, 1, 5 // White
+#define LED_MATRIX_EGI 0, 2, 5 // Grey
+#define LED_MATRIX_TCN 0, 3, 5 // Purple
+#define LED_MATRIX_ANCHR 0, 4, 5 // Blue
+#define LED_MATRIX_STRPT 0, 5, 5 // Yellow
+#define LED_MATRIX_HARS 0, 6, 5 // Green
+
 
 LedControl ledMatrix = LedControl(51, 52, 53, 1);
 

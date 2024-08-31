@@ -281,6 +281,46 @@ DcsBios::IntegerBuffer eacBuffer(A_10C_LASTE_EAC, [](unsigned int newValue) {
   // For eac, lit only if disabled
   ledMatrixSet(LED_MATRIX_EAC, newValue == 1 ? false : true);
 });
+//UFC
+DcsBios::IntegerBuffer masterCautionBuffer(A_10C_MASTER_CAUTION, [](unsigned int newValue) {
+  // For eac, lit only if disabled
+  ledMatrixSet(LED_MATRIX_MASTER_CAUTION, newValue == 1 ? true : false);
+});
+// External lights
+DcsBios::IntegerBuffer extStrobeLeftBuffer(A_10C_EXT_STROBE_LEFT, [](unsigned int newValue) {
+  ledMatrixSet(LED_MATRIX_EXT_STROBE_LEFT, newValue == 1 ? true : false);
+});
+DcsBios::IntegerBuffer extStrobeRightBuffer(A_10C_EXT_STROBE_RIGHT, [](unsigned int newValue) {
+  ledMatrixSet(LED_MATRIX_EXT_STROBE_RIGHT, newValue == 1 ? true : false);
+});
+DcsBios::IntegerBuffer extPositionRightBuffer(A_10C_EXT_POSITION_LIGHT_RIGHT, [](unsigned int newValue) {
+  ledMatrixSet(LED_MATRIX_EXT_POSITION_RIGHT, newValue == 1 ? true : false);
+});
+DcsBios::IntegerBuffer extPositionLeftBuffer(A_10C_EXT_POSITION_LIGHT_LEFT, [](unsigned int newValue) {
+  ledMatrixSet(LED_MATRIX_EXT_POSITION_LEFT, newValue == 1 ? true : false);
+});
+// NMPSP
+DcsBios::IntegerBuffer tislBuffer(A_10C_NMSP_TISL_LED, [](unsigned int newValue) {
+  ledMatrixSet(LED_MATRIX_TISL, newValue == 1 ? true : false);
+});
+DcsBios::IntegerBuffer ilsBuffer(A_10C_NMSP_ILS_LED, [](unsigned int newValue) {
+  ledMatrixSet(LED_MATRIX_ILS, newValue == 1 ? true : false);
+});
+DcsBios::IntegerBuffer egiBuffer(A_10C_NMSP_EGI_LED, [](unsigned int newValue) {
+  ledMatrixSet(LED_MATRIX_EGI, newValue == 1 ? true : false);
+});
+DcsBios::IntegerBuffer tcnBuffer(A_10C_NMSP_TCN_LED, [](unsigned int newValue) {
+  ledMatrixSet(LED_MATRIX_TCN, newValue == 1 ? true : false);
+});
+DcsBios::IntegerBuffer anchrBuffer(A_10C_NMSP_ANCHR_LED, [](unsigned int newValue) {
+  ledMatrixSet(LED_MATRIX_ANCHR, newValue == 1 ? true : false);
+});
+DcsBios::IntegerBuffer strptBuffer(A_10C_NMSP_STEERPT_LED, [](unsigned int newValue) {
+  ledMatrixSet(LED_MATRIX_STRPT, newValue == 1 ? true : false);
+});
+DcsBios::IntegerBuffer harsBuffer(A_10C_NMSP_HARS_LED, [](unsigned int newValue) {
+  ledMatrixSet(LED_MATRIX_HARS, newValue == 1 ? true : false);
+});
 
 Radios::Radios()
 {
