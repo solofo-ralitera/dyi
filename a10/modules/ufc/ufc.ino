@@ -54,8 +54,18 @@ byte I2C_DATA[BUFFER_SIZE] = {
 #define UFC_IFF 34 //!!!!!
 #define UFC_IDM 35 //!!!!!
 
+#define NMSP_PTR 36
+#define NMSP_HARS 37
+#define NMSP_EGI 38
+#define NMSP_TISL 39
+#define NMSP_STRPT 40
+#define NMSP_ANCHR 41
+#define NMSP_TCN 42
+#define NMSP_ILS 43
+
+
 // Index de chaque boutton dans I2C_DATA (row, col)
-byte BUTTON_INDEX[35][2] = {
+byte BUTTON_INDEX[43][2] = {
   {0, 0},
   {0, 1},
   {0, 2},
@@ -91,14 +101,22 @@ byte BUTTON_INDEX[35][2] = {
   {4, 0},
   {4, 1},
   {4, 2},
+  {4, 3},
+  {4, 4},
+  {4, 5},
+  {4, 6},
+  {4, 7},
+  {5, 0},
+  {5, 1},
+  {5, 2},
 };
 
 #define ANALOG_SAMPLE 15
 
 // Cf module radio.h
-void getPBCode(int analogValue, int *numSample, int samples[], int *analogMean) {
+void getPBCode(int analogValue, int *numSample, int samples[], int *analogMean, int pullUpLow = 30, int pullUpHigh = 35) {
   // No press (32 à cause du pullup)
-  if (analogValue >= 30 && analogValue <= 35){
+  if (analogValue >= pullUpLow && analogValue <= pullUpHigh){
     *numSample = 0; // Reset counter
     *analogMean = 0; // Reset mean
     return;
@@ -125,6 +143,10 @@ void setup() {
   // UFC
   pinMode(A2, INPUT_PULLUP); // Right buttons
   pinMode(A3, INPUT_PULLUP); // Left buttons
+  pinMode(A6, INPUT); // NMSP
+
+  // NMSP
+  pinMode(4, INPUT_PULLUP);
 
   Wire.begin(I2C_ADDRESS);  // Activate I2C network
   Wire.onRequest(requestEvent); // Set the request event handler
@@ -147,6 +169,37 @@ void loop() {
   static int samplesUfcLeft[ANALOG_SAMPLE];
   static int analogMeanUfcLeft = 0;
   getPBCode(analogRead(A3), &numSampleUfcLeft, samplesUfcLeft, &analogMeanUfcLeft);
+
+  static int numSampleNmsp = 0;
+  static int samplesNmsp[ANALOG_SAMPLE];
+  static int analogMeanNmsp = 0;
+  getPBCode(analogRead(A6), &numSampleNmsp, samplesNmsp, &analogMeanNmsp, 146, 150);
+
+  // NMSP
+  static PushButton ptr(I2C_DATA, BUTTON_INDEX[NMSP_PTR]);  
+  ptr.run(bitRead(PIND, PIND4));
+
+  static PushButton hars(I2C_DATA, BUTTON_INDEX[NMSP_HARS]);  
+  hars.run((analogMeanNmsp >= 193 && analogMeanNmsp <= 197) ? 0 : 1);
+
+  static PushButton egi(I2C_DATA, BUTTON_INDEX[NMSP_EGI]);  
+  egi.run((analogMeanNmsp >= 386 && analogMeanNmsp <= 390) ? 0 : 1);
+
+  static PushButton tisl(I2C_DATA, BUTTON_INDEX[NMSP_TISL]);  
+  tisl.run((analogMeanNmsp >= 528 && analogMeanNmsp <= 532) ? 0 : 1);
+
+  static PushButton strPt(I2C_DATA, BUTTON_INDEX[NMSP_STRPT]);  
+  strPt.run((analogMeanNmsp >= 208 && analogMeanNmsp <= 212) ? 0 : 1);
+
+  static PushButton anchr(I2C_DATA, BUTTON_INDEX[NMSP_ANCHR]);  
+  anchr.run((analogMeanNmsp >= 248 && analogMeanNmsp <= 252) ? 0 : 1);
+
+  static PushButton tcn(I2C_DATA, BUTTON_INDEX[NMSP_TCN]);  
+  tcn.run((analogMeanNmsp >= 275 && analogMeanNmsp <= 280) ? 0 : 1);
+
+  static PushButton ils(I2C_DATA, BUTTON_INDEX[NMSP_ILS]);  
+  ils.run((analogMeanNmsp >= 317 && analogMeanNmsp <= 321) ? 0 : 1);
+
 
   //////// Ufc right part
   static PushButton deprUp(I2C_DATA, BUTTON_INDEX[UFC_DEPR_UP]);  
@@ -193,6 +246,7 @@ void loop() {
 
   static PushButton masterCaution(I2C_DATA, BUTTON_INDEX[UFC_MASTER_CAUTION]);  
   masterCaution.run((analogMeanUfcRight >= 112 && analogMeanUfcRight <= 116) ? 0 : 1);
+
 
   //////// Ufc left part
   static PushButton steerUp(I2C_DATA, BUTTON_INDEX[UFC_STEER_UP]);  
