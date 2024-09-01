@@ -80,6 +80,9 @@ void setup() {
   // !!!!!!!!!!!!!!!!!!
   // For analog pins A6 and A7, add external 40k pullup resistors
 
+  pinMode(0, INPUT_PULLUP);
+  pinMode(1, INPUT_PULLUP);
+  
   // put your setup code here, to run once:
   Wire.begin(I2C_ADDRESS);  // Activate I2C network
   Wire.onRequest(requestEvent); // Set the request event handler

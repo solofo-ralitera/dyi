@@ -60,7 +60,6 @@ void CheckLists::onPageChange(int page) {
 }
 
 void CheckLists::manageScreenBtn(const char* btn) {
-Serial.println(currentMenu);
 switch (currentMenu)
     {
     case 0: // Current is Main menu

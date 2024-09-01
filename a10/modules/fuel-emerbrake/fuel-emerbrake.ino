@@ -72,6 +72,10 @@ void setup() {
   PORTC |= ((1<<PORTC0) | (1<<PORTC1) | (1<<PORTC2) | (1<<PORTC3));
   PORTD |= ((1<<PORTD2) | (1<<PORTD3) | (1<<PORTD4) | (1<<PORTD5) | (1<<PORTD6) | (1<<PORTD7));
 
+  pinMode(0, INPUT_PULLUP);
+  pinMode(1, INPUT_PULLUP);
+  pinMode(A3, INPUT_PULLUP);
+
   // put your setup code here, to run once:
   Wire.begin(I2C_ADDRESS);  // Activate I2C network
   Wire.onRequest(requestEvent); // Set the request event handler
@@ -139,4 +143,15 @@ void loop() {
   static AutoReleaseSwitch receiverOpen(bitRead(PINB, PINB5), I2C_DATA, BUTTON_INDEX[BTN_IDX_RCVR_OPEN]);
   receiverOpen.run(bitRead(PINB, PINB5), &currentMillis, BUTTON_INDEX[BTN_IDX_RCVR_OPEN]);
 
+  // D1
+  static PushButton d1(I2C_DATA, BUTTON_INDEX[BTN_IDX_SEAT_DOWN]);
+  d1.run(bitRead(PIND, PIND1));
+
+  // D0
+  static PushButton d0(I2C_DATA, BUTTON_INDEX[BTN_IDX_SEAT_UP]);
+  d0.run(bitRead(PIND, PIND0));
+
+  // A3
+  static PushButton a3(I2C_DATA, BUTTON_INDEX[BTN_IDX_EMER_BRAKE]);
+  a3.runToggle(bitRead(PINC, PINC3));
 }

@@ -9,8 +9,8 @@
   
   If you can, use the IRQ Serial connection instead.
 */
-// #define DCSBIOS_IRQ_SERIAL
-#define DCSBIOS_DEFAULT_SERIAL
+#define DCSBIOS_IRQ_SERIAL
+// #define DCSBIOS_DEFAULT_SERIAL
 
 #include "DcsBios.h"
 #include "TftDisplay.h"
@@ -252,35 +252,35 @@ DcsBios::IntegerBuffer intercomVhfVolumeBuffer(A_10C_INT_VHF_VOL, [](unsigned in
 *****************************************************/
 // Landing gear
 DcsBios::IntegerBuffer landingGearLSafeBuffer(A_10C_GEAR_L_SAFE, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_LANDING_GEAR_L_SAFE, newValue == 1 ? true : false);
+  ledMatrixSet(LED_MATRIX_LANDING_GEAR_L_SAFE, newValue);
 });
 DcsBios::IntegerBuffer landingGearNSafeBuffer(A_10C_GEAR_N_SAFE, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_LANDING_GEAR_N_SAFE, newValue == 1 ? true : false);
+  ledMatrixSet(LED_MATRIX_LANDING_GEAR_N_SAFE, newValue);
 });
 DcsBios::IntegerBuffer landingGearRSafeBuffer(A_10C_GEAR_R_SAFE, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_LANDING_GEAR_R_SAFE, newValue == 1 ? true : false);
+  ledMatrixSet(LED_MATRIX_LANDING_GEAR_R_SAFE, newValue);
 });
 DcsBios::IntegerBuffer antiskidBuffer(A_10C_ANTI_SKID_SWITCH, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_ANTISKID, newValue == 1 ? true : false);
+  ledMatrixSet(LED_MATRIX_ANTISKID, newValue);
 });
 DcsBios::IntegerBuffer handleGearWarningBuffer(A_10C_HANDLE_GEAR_WARNING, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_HANDLE_GEAR_WARNING, newValue == 1 ? true : false);
+  ledMatrixSet(LED_MATRIX_HANDLE_GEAR_WARNING, newValue);
 });
 DcsBios::IntegerBuffer flapsPosBuffer(A_10C_FLAP_POS, [](unsigned int newValue) {
     servoIndicatosSetFlaps(newValue);
 });
 // SAS
 DcsBios::IntegerBuffer yawSasLBuffer(A_10C_SASP_YAW_SAS_L, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_YAW_SAS_ENGAGE_L, newValue == 1 ? true : false);
+  ledMatrixSet(LED_MATRIX_YAW_SAS_ENGAGE_L, newValue);
 });
 DcsBios::IntegerBuffer yawSasRBuffer(A_10C_SASP_YAW_SAS_R, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_YAW_SAS_ENGAGE_R, newValue == 1 ? true : false);
+  ledMatrixSet(LED_MATRIX_YAW_SAS_ENGAGE_R, newValue);
 });
 DcsBios::IntegerBuffer pitchSasLBuffer(A_10C_SASP_PITCH_SAS_L, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_PITCH_SAS_ENGAGE_L, newValue == 1 ? true : false);
+  ledMatrixSet(LED_MATRIX_PITCH_SAS_ENGAGE_L, newValue);
 });
 DcsBios::IntegerBuffer pitchSasRBuffer(A_10C_SASP_PITCH_SAS_R, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_PITCH_SAS_ENGAGE_R, newValue == 1 ? true : false);
+  ledMatrixSet(LED_MATRIX_PITCH_SAS_ENGAGE_R, newValue);
 });
 // LASTE
 DcsBios::IntegerBuffer eacBuffer(A_10C_LASTE_EAC, [](unsigned int newValue) {
@@ -290,42 +290,46 @@ DcsBios::IntegerBuffer eacBuffer(A_10C_LASTE_EAC, [](unsigned int newValue) {
 //UFC
 DcsBios::IntegerBuffer masterCautionBuffer(A_10C_MASTER_CAUTION, [](unsigned int newValue) {
   // For eac, lit only if disabled
-  ledMatrixSet(LED_MATRIX_MASTER_CAUTION, newValue == 1 ? true : false);
+  ledMatrixSet(LED_MATRIX_MASTER_CAUTION, newValue);
 });
 // External lights
 DcsBios::IntegerBuffer extStrobeLeftBuffer(A_10C_EXT_STROBE_LEFT, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_EXT_STROBE_LEFT, newValue == 1 ? true : false);
+  ledMatrixSet(LED_MATRIX_EXT_STROBE_LEFT, newValue);
 });
 DcsBios::IntegerBuffer extStrobeRightBuffer(A_10C_EXT_STROBE_RIGHT, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_EXT_STROBE_RIGHT, newValue == 1 ? true : false);
+  ledMatrixSet(LED_MATRIX_EXT_STROBE_RIGHT, newValue);
 });
 DcsBios::IntegerBuffer extPositionRightBuffer(A_10C_EXT_POSITION_LIGHT_RIGHT, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_EXT_POSITION_RIGHT, newValue == 1 ? true : false);
+  ledMatrixSet(LED_MATRIX_EXT_POSITION_RIGHT, newValue);
 });
 DcsBios::IntegerBuffer extPositionLeftBuffer(A_10C_EXT_POSITION_LIGHT_LEFT, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_EXT_POSITION_LEFT, newValue == 1 ? true : false);
+  ledMatrixSet(LED_MATRIX_EXT_POSITION_LEFT, newValue);
 });
 // NMPSP
 DcsBios::IntegerBuffer tislBuffer(A_10C_NMSP_TISL_LED, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_TISL, newValue == 1 ? true : false);
+  ledMatrixSet(LED_MATRIX_TISL, newValue);
 });
 DcsBios::IntegerBuffer ilsBuffer(A_10C_NMSP_ILS_LED, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_ILS, newValue == 1 ? true : false);
+  ledMatrixSet(LED_MATRIX_ILS, newValue);
 });
 DcsBios::IntegerBuffer egiBuffer(A_10C_NMSP_EGI_LED, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_EGI, newValue == 1 ? true : false);
+  ledMatrixSet(LED_MATRIX_EGI, newValue);
 });
 DcsBios::IntegerBuffer tcnBuffer(A_10C_NMSP_TCN_LED, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_TCN, newValue == 1 ? true : false);
+  ledMatrixSet(LED_MATRIX_TCN, newValue);
 });
 DcsBios::IntegerBuffer anchrBuffer(A_10C_NMSP_ANCHR_LED, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_ANCHR, newValue == 1 ? true : false);
+  ledMatrixSet(LED_MATRIX_ANCHR, newValue);
 });
 DcsBios::IntegerBuffer strptBuffer(A_10C_NMSP_STEERPT_LED, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_STRPT, newValue == 1 ? true : false);
+  ledMatrixSet(LED_MATRIX_STRPT, newValue);
 });
 DcsBios::IntegerBuffer harsBuffer(A_10C_NMSP_HARS_LED, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_HARS, newValue == 1 ? true : false);
+  ledMatrixSet(LED_MATRIX_HARS, newValue);
+});
+// Emer brake
+DcsBios::IntegerBuffer emerbrakeBuffer(A_10C_EMER_BRAKE, [](unsigned int newValue) {
+  ledMatrixSet(LED_MATRIX_EMERBRAKE, newValue);
 });
 
 Radios::Radios()

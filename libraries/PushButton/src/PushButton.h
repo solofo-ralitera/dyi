@@ -21,12 +21,16 @@ class PushButton
         byte pinStatus // Status of the switch pin (0 = pressed, 1 = released)
     );
 
+    void runToggle(
+        byte pinStatus
+    );
+
     void run(
         byte pinStatus, // Status of the switch pin (0 = pressed, 1 = released)
         unsigned long *currentMillis,
         byte *i2cDataReleased
     );
-
+    
     void runCallBack(
       byte pinStatus, // Status of the switch pin (0 = pressed, 1 = released)
       void (*pressCallback)(),
