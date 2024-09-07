@@ -7,7 +7,7 @@
     |1, 0|1, 1|    |    |    |1, 5|1, 6|1, 7|
     |2,  |    |    |    |    |2, 5|    |    |
     |3   |    |    |    |    |3, 5|    |    |
-    |4   |    |    |    |    |4, 5|    |    |
+    |4, 0|    |    |    |    |4, 5|    |    |
     |5, 0|5, 1|5, 2|5   |5   |5, 5|5   |5   |
     |6, 0|6, 1|6, 2|6, 3|6   |6, 5|6   |6   |
     |7, 0|7, 1|7, 2|7, 3|    |7, 5|    |    |
@@ -43,7 +43,9 @@
 #define LED_MATRIX_STRPT 0, 5, 5 // Yellow
 #define LED_MATRIX_HARS 0, 6, 5 // Green
 
-#define LED_MATRIX_EMERBRAKE 0, 7, 5 // Red /orange
+#define LED_MATRIX_EMERBRAKE 0, 7, 5 // white / black
+
+#define LED_MATRIX_APU 0, 4, 0 // Black / white
 
 LedControl ledMatrix = LedControl(51, 52, 53, 1);
 

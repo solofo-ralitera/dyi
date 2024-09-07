@@ -7,6 +7,8 @@ L'appuie du boutton maintient le joystick appuyé jusqu'au relachement du bouton
 
 #include "Arduino.h"
 
+#define PUSHBUTTON_DEBOUNCE_DELAY 75
+
 class PushButton
 {
   public:
@@ -22,7 +24,8 @@ class PushButton
     );
 
     void runToggle(
-        byte pinStatus
+        byte pinStatus,
+        unsigned long *currentMillis
     );
 
     void run(
@@ -45,6 +48,8 @@ class PushButton
     byte *_i2cData;
     byte *_i2cDataIndex;
     int lastStatus = 0;
+    unsigned long previousMillis = 0;
+    bool checkForRelease = false;
 };
 
 #endif

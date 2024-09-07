@@ -12,7 +12,6 @@ PushButton::PushButton(
 {
   _i2cData = i2cData;
   _i2cDataIndex = i2cDataIndex;
-  lastStatus = 0;
 }
 
 void PushButton::run(byte pinStatus) {
@@ -30,18 +29,25 @@ void PushButton::run(byte pinStatus) {
 }
 
 
-void PushButton::runToggle(byte pinStatus) {
+void PushButton::runToggle(byte pinStatus, unsigned long *currentMillis) {
   if (pinStatus == 0) {
     if (lastStatus == 0) {
-      if (bitRead(_i2cData[_i2cDataIndex[0]], _i2cDataIndex[1]) == 0) {
-        bitSet(_i2cData[_i2cDataIndex[0]], _i2cDataIndex[1]);
-      } else {
-        bitClear(_i2cData[_i2cDataIndex[0]], _i2cDataIndex[1]);
-      }
       lastStatus = 1;
     }
   } else {
-    lastStatus = 0;
+    if (lastStatus == 1) {
+      lastStatus = 0;
+      checkForRelease = true;
+      previousMillis = *currentMillis;
+    }
+  }
+  if (checkForRelease && (*currentMillis - previousMillis) >= PUSHBUTTON_DEBOUNCE_DELAY) {
+    if (bitRead(_i2cData[_i2cDataIndex[0]], _i2cDataIndex[1]) == 0) {
+      bitSet(_i2cData[_i2cDataIndex[0]], _i2cDataIndex[1]);
+    } else {
+      bitClear(_i2cData[_i2cDataIndex[0]], _i2cDataIndex[1]);
+    }
+    checkForRelease = false;
   }
 }
 

@@ -153,5 +153,5 @@ void loop() {
 
   // A3
   static PushButton a3(I2C_DATA, BUTTON_INDEX[BTN_IDX_EMER_BRAKE]);
-  a3.runToggle(bitRead(PINC, PINC3));
+  a3.runToggle(bitRead(PINC, PINC3), &currentMillis);
 }

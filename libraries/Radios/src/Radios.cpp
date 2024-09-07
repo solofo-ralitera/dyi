@@ -331,6 +331,10 @@ DcsBios::IntegerBuffer harsBuffer(A_10C_NMSP_HARS_LED, [](unsigned int newValue)
 DcsBios::IntegerBuffer emerbrakeBuffer(A_10C_EMER_BRAKE, [](unsigned int newValue) {
   ledMatrixSet(LED_MATRIX_EMERBRAKE, newValue);
 });
+// APU
+DcsBios::IntegerBuffer apuBuffer(A_10C_APU_RPM, [](unsigned int newValue) {
+  ledMatrixSet(LED_MATRIX_APU, map(newValue, 0, 65535, 0, 100) > 80 ? 1 : 0);
+});
 
 Radios::Radios()
 {
