@@ -90,3 +90,26 @@ void PushButton::runCallBack(byte pinStatus, void (*pressCallback)()) {
     }
   }
 }
+
+void PushButton::getPBCode(int analogValue, int *numSample, int samples[], int *analogMean, int pullUpLow = 30, int pullUpHigh = 35) {
+  // No press (32 à cause du pullup)
+  if (analogValue >= pullUpLow && analogValue <= pullUpHigh){
+    *numSample = 0; // Reset counter
+    *analogMean = 0; // Reset mean
+    return;
+  } 
+
+  if (*numSample < ANALOG_SAMPLE) {
+    samples[*numSample] = analogValue;
+    *numSample += 1;
+    return;
+  }
+  if (*numSample == ANALOG_SAMPLE) {
+    // Calc moyenne
+    long sum = 0L;
+    for (int i = 0; i < ANALOG_SAMPLE; i++) {
+      sum += samples[i];
+    }
+    *analogMean = sum / ANALOG_SAMPLE;
+  }
+}

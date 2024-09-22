@@ -7,7 +7,8 @@ L'appuie du boutton maintient le joystick appuyé jusqu'au relachement du bouton
 
 #include "Arduino.h"
 
-#define PUSHBUTTON_DEBOUNCE_DELAY 75
+#define PUSHBUTTON_DEBOUNCE_DELAY 200
+#define ANALOG_SAMPLE 15
 
 class PushButton
 {
@@ -18,6 +19,8 @@ class PushButton
       byte *i2cData,
       byte *i2cDataIndex
     );
+
+    static void getPBCode(int analogValue, int *numSample, int samples[], int *analogMean, int pullUpLow = 30, int pullUpHigh = 35);
 
     void run(
         byte pinStatus // Status of the switch pin (0 = pressed, 1 = released)

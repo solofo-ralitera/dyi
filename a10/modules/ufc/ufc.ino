@@ -119,32 +119,6 @@ byte BUTTON_INDEX[44][2] = {
   {5, 3},
 };
 
-#define ANALOG_SAMPLE 15
-
-// Cf module radio.h
-void getPBCode(int analogValue, int *numSample, int samples[], int *analogMean, int pullUpLow = 30, int pullUpHigh = 35) {
-  // No press (32 à cause du pullup)
-  if (analogValue >= pullUpLow && analogValue <= pullUpHigh){
-    *numSample = 0; // Reset counter
-    *analogMean = 0; // Reset mean
-    return;
-  } 
-
-  if (*numSample < ANALOG_SAMPLE) {
-    samples[*numSample] = analogValue;
-    *numSample += 1;
-    return;
-  }
-  if (*numSample == ANALOG_SAMPLE) {
-    // Calc moyenne
-    long sum = 0L;
-    for (int i = 0; i < ANALOG_SAMPLE; i++) {
-      sum += samples[i];
-    }
-    *analogMean = sum / ANALOG_SAMPLE;
-  }
-}
-
 void setup() {
   // Serial.begin(9600);
 
@@ -173,17 +147,17 @@ void loop() {
   static int numSampleUfcRight = 0;
   static int samplesUfcRight[ANALOG_SAMPLE];
   static int analogMeanUfcRight = 0;
-  getPBCode(analogRead(A2), &numSampleUfcRight, samplesUfcRight, &analogMeanUfcRight);
+  PushButton::getPBCode(analogRead(A2), &numSampleUfcRight, samplesUfcRight, &analogMeanUfcRight);
 
   static int numSampleUfcLeft = 0;
   static int samplesUfcLeft[ANALOG_SAMPLE];
   static int analogMeanUfcLeft = 0;
-  getPBCode(analogRead(A3), &numSampleUfcLeft, samplesUfcLeft, &analogMeanUfcLeft);
+  PushButton::getPBCode(analogRead(A3), &numSampleUfcLeft, samplesUfcLeft, &analogMeanUfcLeft);
 
   static int numSampleNmsp = 0;
   static int samplesNmsp[ANALOG_SAMPLE];
   static int analogMeanNmsp = 0;
-  getPBCode(analogRead(A6), &numSampleNmsp, samplesNmsp, &analogMeanNmsp, 146, 150);
+  PushButton::getPBCode(analogRead(A6), &numSampleNmsp, samplesNmsp, &analogMeanNmsp, 146, 150);
 
   // NMSP
   // D4

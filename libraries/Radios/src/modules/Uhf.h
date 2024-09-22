@@ -9,7 +9,7 @@ class Uhf
   public:
     Uhf(TftDisplay*);
 
-    const char *title = "UHF";
+    const char *title = "UHF Fm";
     bool isActive = false;
 
     unsigned int selectedMasterSwitch = 0;

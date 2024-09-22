@@ -1,6 +1,9 @@
 #include "Keyboard.h"
 #include "SlaveModule.h"
 
+// Change device name
+// https://liveelectronics.musinou.net/MIDIdeviceName.php
+
 Joystick_ joystick (JOYSTICK_DEFAULT_REPORT_ID, JOYSTICK_TYPE_JOYSTICK,
   128, 0, // Button Count, Hat Switch Count
   true, // X
