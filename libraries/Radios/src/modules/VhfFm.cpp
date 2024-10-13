@@ -2,8 +2,10 @@
 #include "VhfFm.h"
 
 
-VhfFm::VhfFm(TftDisplay* _display) {
+VhfFm::VhfFm(TftDisplay* _display, bool available, char *_title) {
     display = _display;
+    title = _title;
+    isAvailable = available;
 }
 
 void VhfFm::activate() {
@@ -33,6 +35,7 @@ void VhfFm::setChannel(char* newValue) {
 void VhfFm::setFrequency(char* newValue) {
     // if (frequency == newValue) return;
     frequency = newValue;
+    isAvailable = true;
     if (isActive) display->printRadioFrequency(frequency);
 }
 

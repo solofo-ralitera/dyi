@@ -7,8 +7,9 @@
 
 #define SECONDARY_ARC210_SWITCH_OFFSET 220
 
-Arc210::Arc210(TftDisplay* _display) {
+Arc210::Arc210(TftDisplay* _display, bool available) {
     display = _display;
+    isAvailable = available;
 }
 
 void Arc210::activate() {
@@ -42,6 +43,7 @@ void Arc210::setChannel(char* newValue) {
 void Arc210::setFrequency(char* newValue) {
     // if (frequency == newValue) return;
     frequency = newValue;
+    // isAvailable = true;
     if (isActive) display->printRadioFrequency(frequency);
 }
 

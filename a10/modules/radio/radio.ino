@@ -32,6 +32,7 @@ unsigned long currentMillis = 0;
 #include "arc210Cmd.h"
 #include "uhfCmd.h"
 #include "vhfFmCmd.h"
+#include "vhfAmCmd.h"
 #include "ilsCmd.h"
 #include "tacanCmd.h"
 #include "intercomPanel.h"
@@ -77,7 +78,12 @@ void loop(void) {
 
   switch(radios.getActivatedModule()) {
     case 0:
-      arc210Commands(pbCode); break;
+      if (radios.isArc210Available()) {
+        arc210Commands(pbCode);
+      } else {
+        vhfAmCommands(pbCode);
+      }
+      break;
     case 1:
       uhfCommands(pbCode); break;
     case 2:

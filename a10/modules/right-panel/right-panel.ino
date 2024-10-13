@@ -6,12 +6,21 @@ CDU keyboard
 
 #include "DcsBios.h"
 
+byte I2C_DATA[1] = {
+  B00000000,
+};
+
 void sendDcsCommand(const char* msg, const char* args) {
   while(!DcsBios::tryToSendDcsBiosMessage(msg, args));
 }
 
 #include "caution-panel.h"
 #include "cdu-keyboard.h"
+#include "cdu-keyboard-other.h"
+#include "cdu-keyboard-num.h"
+#include "cdu-keyboard-alpha.h"
+#include "light-control.h"
+#include "aap.h"
 
 // STALL SYS
 DcsBios::IntegerBuffer cp1(A_10C_CL_K1, [](unsigned int newValue) {
@@ -209,11 +218,26 @@ DcsBios::IntegerBuffer cp48(A_10C_CL_B4, [](unsigned int newValue) {
 void setup() {
   // Serial.begin(9600);
   setupCautionPanel();
+
   setupCduKeyboard();
+  setupCduKeyboardOther();
+  setupCduKeyboardNum();
+  setupCduKeyboardAlpha();
+
+  setupLightControl();
+  setupAap();
+
   DcsBios::setup();
 }
 
 void loop() {
   DcsBios::loop();
+  
   runCduKeyboard();
+  runCduKeyboardOther();
+  runCduKeyboardNum();
+  runCduKeyboardAlpha();
+
+  runLightControl();
+  runAap();
 }

@@ -28,9 +28,13 @@
 #include "modules/servoIndicators.h"
 
 TftDisplay display;
-Arc210 arc210(&display);
+
+// Switch arc210 vs vhf am, A-10C et A-10C II
+Arc210 arc210(&display, false);
+VhfFm vhfAm(&display, false, "VHF AM");
+
 Uhf uhf(&display);
-VhfFm vhfFm(&display);
+VhfFm vhfFm(&display, true, "VHF FM");
 Ils ils(&display);
 Tacan tacan(&display);
 IntercomPanel intercomPanel(&display);
@@ -43,10 +47,11 @@ CheckLists checklists(&display);
 // 4: TACAN
 // 5: Intercom
 // 6: Checklists
-int currentRadio = -1;
+int currentRadio = 6;
 
 void deactivateAllModules() {
   arc210.deactivate();
+  vhfAm.deactivate();
   uhf.deactivate();
   vhfFm.deactivate();
   ils.deactivate();
@@ -58,11 +63,19 @@ void deactivateAllModules() {
 }
 
 void activateArc210() {
-  if (arc210.isActive) return;
-  deactivateAllModules();
-  display.printRadioTitle(arc210.title);
-  arc210.activate();
-  currentRadio = 0;
+  if (arc210.isAvailable) {
+    if (arc210.isActive) return;
+    deactivateAllModules();
+    display.printRadioTitle(arc210.title);
+    arc210.activate();
+    currentRadio = 0;
+  } else if (vhfAm.isAvailable) {
+    if (vhfAm.isActive) return;
+    deactivateAllModules();
+    display.printRadioTitle(vhfAm.title);
+    vhfAm.activate();
+    currentRadio = 0;    
+  }
 }
 
 void activateUhf() {
@@ -114,6 +127,14 @@ void activateCheckLists() {
 }
 
 ///////////// Arc-210 ////////////////////
+String arc210Check = String("KY-58 VOICE");
+DcsBios::StringBuffer<11> arc210ComsecModeBuffer(A_10C_ARC210_COMSEC_MODE, [](char* newValue) {
+  // Check if it's II tank killer
+  if (String(newValue) == arc210Check) {
+    arc210.isAvailable = true;
+    vhfAm.isAvailable = false;
+  }
+});
 DcsBios::StringBuffer<2> arc210ActiveChannelBuffer(A_10C_ARC210_ACTIVE_CHANNEL, [](char* newValue) {
   arc210.setChannel(newValue);
 });
@@ -131,6 +152,32 @@ DcsBios::IntegerBuffer arc210SecSwitchBuffer(A_10C_ARC210_SEC_SW, [](unsigned in
 });
 DcsBios::IntegerBuffer arc210SqlBuffer(A_10C_ARC210_SQUELCH, [](unsigned int newValue) {
   arc210.setSql(newValue);
+});
+///////////// VHF AM ////////////////////
+DcsBios::IntegerBuffer vhfamFreq1RotBuffer(A_10C_VHFAM_FREQ1_ROT, [](unsigned int newValue) {
+  // Its A-10C One
+  if (newValue > 0) {
+    arc210.isAvailable = false;
+    vhfAm.isAvailable = true;
+  }
+});
+DcsBios::StringBuffer<2> vhfAmPresetBuffer(A_10C_VHFAM_PRESET, [](char* newValue) {
+  vhfAm.setChannel(newValue);
+});
+DcsBios::StringBuffer<7> vhfAmFrequencyBuffer(A_10C_VHF_AM_FREQUENCY_S, [](char* newValue) {
+  vhfAm.setFrequency(newValue);
+});
+DcsBios::IntegerBuffer vhfAmMasterSwitchBuffer(A_10C_VHFAM_FREQEMER, [](unsigned int newValue) {
+  vhfAm.setSelectedMasterSwitch(newValue);
+});
+DcsBios::IntegerBuffer vhfAmSecSwitchBuffer(A_10C_VHFAM_MODE, [](unsigned int newValue) {
+  vhfAm.setSelectedSecondarySwitch(newValue);
+});
+DcsBios::IntegerBuffer vhfAmVolumeBuffer(A_10C_VHFAM_VOL, [](unsigned int newValue) {
+  vhfAm.setVolume(map(newValue, 0, 65535, 0, 100));
+});
+DcsBios::IntegerBuffer vhfAmSqlBuffer(A_10C_VHFAM_SQUELCH, [](unsigned int newValue) {
+  vhfAm.setSql(newValue);
 });
 ///////////// UHF ////////////////////
 DcsBios::StringBuffer<2> uhfPresetBuffer(A_10C_UHF_PRESET, [](char* newValue) {
@@ -357,7 +404,9 @@ void Radios::run() {
 
 
 void Radios::activateNextModule() {
-  if (arc210.isActive) {
+  if (checklists.isActive) {
+    activateArc210();
+  } else if (arc210.isActive || vhfAm.isActive) {
     activateUhf();
   } else if (uhf.isActive) {
     activateVhfFm();
@@ -369,35 +418,37 @@ void Radios::activateNextModule() {
     activateIntercomPanel();
   } else if (intercomPanel.isActive) {
     activateCheckLists();
-  } else if (checklists.isActive) {
-    activateArc210();
   } else {
-    activateArc210();
+    activateCheckLists();
   }
 }
 
 void Radios::activatePreviousModule() {
-  if (arc210.isActive) {
-    activateCheckLists();
-  } else if (uhf.isActive) {
-    activateArc210();
-  } else if (vhfFm.isActive) {
-    activateUhf();
-  } else if (ils.isActive) {
-    activateVhfFm();
-  } else if (tacan.isActive) {
-    activateIls();
+  if (checklists.isActive) {
+    activateIntercomPanel();
   } else if (intercomPanel.isActive) {
     activateTacan();
-  } else if (checklists.isActive) {
-    activateIntercomPanel();
-  } else {
+  } else if (tacan.isActive) {
+    activateIls();
+  } else if (ils.isActive) {
+    activateVhfFm();
+  } else if (vhfFm.isActive) {
+    activateUhf();
+  } else if (uhf.isActive) {
     activateArc210();
+  } else if (arc210.isActive || vhfAm.isActive) {
+    activateCheckLists();
+  } else {
+    activateCheckLists();
   }
 }
 
 int Radios::getActivatedModule() {
   return currentRadio;
+}
+
+bool Radios::isArc210Available() {
+  return arc210.isActive;
 }
 
 void Radios::sendDcsCommand(const char* msg, const char* args) {

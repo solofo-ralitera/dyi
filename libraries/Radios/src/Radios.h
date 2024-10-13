@@ -24,6 +24,8 @@ class Radios
 
     void sendDcsCommand(const char* msg, const char* args);
 
+    bool isArc210Available();
+    
     unsigned int getArc210MasterMode();
     unsigned int getArc210SecondaryMode();
     

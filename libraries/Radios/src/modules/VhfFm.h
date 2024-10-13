@@ -7,10 +7,11 @@
 class VhfFm
 {
   public:
-    VhfFm(TftDisplay*);
+    VhfFm(TftDisplay*, bool available, char *title);
 
-    const char *title = "VHF FM";
+    char *title = "VHF FM";
     bool isActive = false;
+    bool isAvailable = true;
 
     void activate();
     void deactivate();

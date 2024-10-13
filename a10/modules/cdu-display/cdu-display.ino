@@ -29,6 +29,30 @@ void clearScreen() {
 
 void printCdu(char *text, int row)
 {
+  switch(row) {
+    case 0:
+      if (strcmp(line0.c_str(), text) == 0) return;
+    case 1:
+      if (strcmp(line1.c_str(), text) == 0) return;
+    case 2:
+      if (strcmp(line2.c_str(), text) == 0) return;
+    case 3:
+      if (strcmp(line3.c_str(), text) == 0) return;
+    case 4:
+      if (strcmp(line4.c_str(), text) == 0) return;
+    case 5:
+      if (strcmp(line5.c_str(), text) == 0) return;
+    case 6:
+      if (strcmp(line6.c_str(), text) == 0) return;
+    case 7:
+      if (strcmp(line7.c_str(), text) == 0) return;
+    case 8:
+      if (strcmp(line8.c_str(), text) == 0) return;
+    case 9:
+      if (strcmp(line9.c_str(), text) == 0) return;
+    default:
+      break;
+  }
   for (int i = 0; i <= 24; i++) {
     switch(row) {
       case 0:

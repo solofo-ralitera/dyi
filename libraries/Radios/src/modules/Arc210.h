@@ -7,10 +7,11 @@
 class Arc210
 {
   public:
-    Arc210(TftDisplay*);
+    Arc210(TftDisplay*, bool available);
 
     const char *title = "VHF AM/FM";
     bool isActive = false;
+    bool isAvailable = true;
 
     void activate();
     void deactivate();
