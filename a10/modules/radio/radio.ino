@@ -3,7 +3,7 @@
 #include "PushButton.h"
 #include "AutoReleaseSwitch.h"
 
-#define ENCODER_DO_NOT_USE_INTERRUPTS
+// #define ENCODER_DO_NOT_USE_INTERRUPTS
 #include "KnobJoy.h"
 
 #include "radio.h"
@@ -11,8 +11,9 @@
 // Adresse I2C du module
 #define I2C_ADDRESS 5
 // Taille des données I2C à tranmettre (en bytes)
-#define BUFFER_SIZE 1
+#define BUFFER_SIZE 2
 byte I2C_DATA[BUFFER_SIZE] = {
+  B00000000,
   B00000000,
 };
 
@@ -20,9 +21,15 @@ byte I2C_DATA[BUFFER_SIZE] = {
 #define BTN_MIC_SWITCH_AFT 1
 #define BTN_MIC_SWITCH_FWD 2
 
+#define BTN_NVG_TOGGLE 4
+#define BTN_NVG_DEC 5
+#define BTN_NVG_INC 6
+
 // Index de chaque boutton dans I2C_DATA (row, col)
-byte BUTTON_INDEX[4][2] = {
+byte BUTTON_INDEX[7][2] = {
   {0, 0},{0, 1},{0, 2},{0, 3},
+  {1, 0}, {1, 1}, {1, 2},
+
 };
 
 #include "Radios.h"
@@ -75,7 +82,7 @@ void loop(void) {
   }, []() {
     radios.activateNextModule();
   });
-
+  
   switch(radios.getActivatedModule()) {
     case 0:
       if (radios.isArc210Available()) {
@@ -95,6 +102,8 @@ void loop(void) {
     case 5:
       intercomPanelCommands(pbCode); break;
     case 6:
-      checklistsCommands(pbCode); break;
+    case 61:
+    case 62:
+      checklistsCommands(pbCode, radios.getActivatedModule()); break;
   }
 }

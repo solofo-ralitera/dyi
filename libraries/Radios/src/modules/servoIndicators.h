@@ -1,12 +1,12 @@
 #ifndef servoIndicators_h
 #define servoIndicators_h
 
-#include <Servo.h>
+#include <Servo_Hardware_PWM.h>
 
 Servo flapsIndicator;
 
 void servoIndicatorsInit() {
-    flapsIndicator.attach(14);
+    flapsIndicator.attach(44);
     flapsIndicator.write(180);
 }
 

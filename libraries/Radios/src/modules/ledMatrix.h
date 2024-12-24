@@ -47,16 +47,46 @@
 
 #define LED_MATRIX_APU 0, 4, 0 // Black / white
 
-LedControl ledMatrix = LedControl(51, 52, 53, 1);
 
-void ledMatrixInit() {
-    ledMatrix.shutdown(0, false);
-    ledMatrix.setIntensity(0,8);
-    ledMatrix.clearDisplay(0);
-}
 
-void ledMatrixSet(int addr, int row, int col , boolean state) {
-  ledMatrix.setLed(addr, row, col, state);
-}
+class LedMatrix
+{
+  public:
+    LedMatrix() {
+
+    }
+
+    void init() {
+        ledMatrix.shutdown(0, false);
+        ledMatrix.setIntensity(0,8);
+        ledMatrix.clearDisplay(0);
+    }
+
+    void set(int addr, int row, int col , boolean state) {
+      ledMatrix.setLed(addr, row, col, state);
+      bitWrite(ledStatus[row], col, state);
+    }
+
+    void checkAll() {
+      for( int row = 0; row <= 8; row++) {
+        for( int col = 0; col <= 8; col++) {
+          ledMatrix.setLed(0, row, col, true);
+        }
+      }
+
+      delay(1000);
+
+      for( int row = 0; row <= 8; row++) {
+        for( int col = 0; col <= 8; col++) {
+          set(0, row, col, bitRead(ledStatus[row], col));
+        }
+      }
+    }
+
+  private:
+    LedControl ledMatrix = LedControl(51, 52, 53, 1);
+    byte ledStatus[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+};
+
 #endif
 

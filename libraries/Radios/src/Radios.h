@@ -38,6 +38,8 @@ class Radios
     void displayCheckListsBottomScreenBtn();
     void displayCheckListsMenuBtn();
     void displayCheckListsPage(int page);
+    // void onCheckListChannelPress();
+    // void onCheckListChannelRelease();
 };
 
 #endif

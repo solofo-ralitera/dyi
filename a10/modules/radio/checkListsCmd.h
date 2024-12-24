@@ -2,8 +2,21 @@
 #define checklistsCommands_h
 
 #include "PushButton.h"
+#include "KnobJoy.h"
 
-void checklistsCommands(int pbCode) {
+/**
+checkListPage
+6 main menu
+61 fuel
+62 nvg
+*/
+int CheckListPage = 0;
+void checklistsCommands(int pbCode, int checkListPage) {
+  static unsigned long cMillis;
+  cMillis = millis();
+  
+  CheckListPage = checkListPage;
+
   static PushButton topScreen;
   topScreen.runCallBack(pbCode == PB_TOP_SCREEN ? 0 : 1, []() {
     radios.displayCheckListsTopScreenBtn();
@@ -48,6 +61,28 @@ void checklistsCommands(int pbCode) {
   pbFrequenctSelector5.runCallBack(pbCode == PB_FREQUENCY_SELECTOR_5 ? 0 : 1, []() {
     radios.displayCheckListsPage(5);
   });
+
+  static PushButton channel;
+  static PushButton nvhChannelJoy(I2C_DATA, BUTTON_INDEX[BTN_NVG_TOGGLE]); 
+  channel.runCallBack(pbCode == PB_CHANNEL ? 0 : 1, []() {
+    switch (CheckListPage) {
+      case 61: radios.sendDcsCommand("FQIS_TEST", "1"); break; // Fuel
+      case 62: nvhChannelJoy.run(0); // Nvg
+      default: break;
+    }
+  }, []() {
+    switch (CheckListPage) {
+      case 61: radios.sendDcsCommand("FQIS_TEST", "0"); break; // Fuel
+      case 62: nvhChannelJoy.run(1); // Nvg
+      default: break;
+    }
+  });
+
+  static KnobJoy knobNvgChannel(I2C_DATA, 33, 32);
+  switch (CheckListPage) {
+    case 62: knobNvgChannel.runIndefiniteLeftRight(BUTTON_INDEX[BTN_NVG_DEC], BUTTON_INDEX[BTN_NVG_INC], &cMillis);
+    default: break;
+  }  
 }
 #endif
 

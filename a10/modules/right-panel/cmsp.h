@@ -15,10 +15,10 @@ void setupCmsp() {
   pinMode(A8, INPUT);
   pinMode(A9, INPUT);
 
+  pinMode(5, INPUT_PULLUP);
+  pinMode(4, INPUT_PULLUP);
   pinMode(3, INPUT_PULLUP);
   pinMode(2, INPUT_PULLUP);
-  // pinMode(1, INPUT_PULLUP);
-  // pinMode(0, INPUT_PULLUP);
 
   pinMode(18, INPUT_PULLUP);
   pinMode(17, INPUT_PULLUP);
@@ -31,8 +31,8 @@ void setupCmsp() {
   lcd.setCursor(0, 0);
 }
 
-void cmspPrintLcd(char* newValue, int line) {
-  lcd.setCursor(0, line);
+void cmspPrintLcd(char* newValue, int line, int row) {
+  lcd.setCursor(row, line);
   lcd.print(newValue);
 }
 
@@ -172,23 +172,21 @@ void runCmsp() {
   }
 
   ///////////////////////////////////
-  /*
-  static PushButton pin0;
-  pin0.runCallBack(bitRead(PINE, PINE0), []() {
+  static PushButton pin2;
+  pin2.runCallBack(bitRead(PINE, PINE4), []() {
     sendDcsCommand("CMSP_DISP", "2"); // Disp menu
   }, []() {
     sendDcsCommand("CMSP_DISP", "1"); // Disp ON
   });
-  static PushButton pin1;
-  pin1.runCallBack(bitRead(PINE, PINE1), []() {
+  static PushButton pin3;
+  pin3.runCallBack(bitRead(PINE, PINE5), []() {
     sendDcsCommand("CMSP_DISP", "0"); // DISP OFF
   }, []() {
     sendDcsCommand("CMSP_DISP", "1"); // DISP ON
   });
-  */
 
-  static PushButton pin2;
-  pin2.runCallBack(bitRead(PINE, PINE4), []() {
+  static PushButton pin4;
+  pin4.runCallBack(bitRead(PING, PING5), []() {
     sendDcsCommand("CMSP_RWR", "2"); // RWR menu
   }, []() {
     sendDcsCommand("CMSP_RWR", "1"); // RWR ON
@@ -201,14 +199,13 @@ void runCmsp() {
   });
 
 
-  static PushButton pin3;
-  pin3.runCallBack(bitRead(PINE, PINE5), []() {
+  static PushButton pin5;
+  pin5.runCallBack(bitRead(PINE, PINE3), []() {
     sendDcsCommand("CMSP_JMR", "2"); // JMR menu
   }, []() {
     sendDcsCommand("CMSP_JMR", "1"); // JMR ON
   });
   static PushButton pin16;
-  ///////////////////////////Serial.println(bitRead(PINH, PINH1));
   pin16.runCallBack(bitRead(PINH, PINH1), []() {
     sendDcsCommand("CMSP_JMR", "0"); // RWR OFF
   }, []() {
