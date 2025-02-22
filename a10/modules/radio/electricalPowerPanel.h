@@ -4,7 +4,7 @@
 #include "PushButton.h"
 
 void initElectricalPowerPanel() {
-  pinMode(44, INPUT_PULLUP);
+  pinMode(14, INPUT_PULLUP);
   pinMode(45, INPUT_PULLUP);
   pinMode(46, INPUT_PULLUP);
   pinMode(47, INPUT_PULLUP);
@@ -53,9 +53,9 @@ void apcGenOff() {
 
 
 void runElectricalPowerPanel() {
-  // 44 Battery PWR
+  // 14 Battery PWR
   static PushButton batteryPwr;
-  batteryPwr.runCallBack(bitRead(PINL, PINL5), batteryPwrOn, batteryPwrOff);
+  batteryPwr.runCallBack(bitRead(PINJ, PINJ1), batteryPwrOn, batteryPwrOff);
 
   // 45 Emer FLOOD
   // bitRead(PINL, PINL4);

@@ -21,6 +21,7 @@ void sendDcsCommand(const char* msg, const char* args) {
 #include "cdu-keyboard-alpha.h"
 #include "light-control.h"
 #include "aap.h"
+#include "cmsp.h"
 
 // STALL SYS
 DcsBios::IntegerBuffer cp1(A_10C_CL_K1, [](unsigned int newValue) {
@@ -215,6 +216,29 @@ DcsBios::IntegerBuffer cp48(A_10C_CL_B4, [](unsigned int newValue) {
   cautionPanel.setLed(0, 7, 7, newValue);
 });
 
+/////////////////////// CMSP
+DcsBios::StringBuffer<8> cmscTxtJmrBuffer(A_10C_CMSC_TXT_JMR, [](char* newValue) {
+  cmspPrintLcd(newValue, 0, 0);
+});
+DcsBios::StringBuffer<19> cmsp1Buffer(A_10C_CMSP1, [](char* newValue) {
+  cmspPrintLcd(newValue, 2, 0);
+}); 
+DcsBios::StringBuffer<19> cmsp2Buffer(A_10C_CMSP2, [](char* newValue) {
+  cmspPrintLcd(newValue, 3, 0);
+}); 
+DcsBios::IntegerBuffer extSpeedBrakeLeftBuffer(A_10C_EXT_SPEED_BRAKE_LEFT, [](unsigned int newValue) {
+  int pctSb = map(newValue, 0, 65535, 0, 100);
+  String strSb = String(pctSb);
+  if (pctSb == 0) {
+    cmspPrintLcd("   ", 0, 17);
+  } else if (pctSb < 100) {
+    cmspPrintLcd(" ", 0, 17);
+    cmspPrintLcd(strSb.c_str(), 0, 18);
+  }else {
+    cmspPrintLcd(strSb.c_str(), 0, 17);
+  }
+});
+
 void setup() {
   // Serial.begin(9600);
   setupCautionPanel();
@@ -226,6 +250,7 @@ void setup() {
 
   setupLightControl();
   setupAap();
+  setupCmsp();
 
   DcsBios::setup();
 }
@@ -240,4 +265,6 @@ void loop() {
 
   runLightControl();
   runAap();
+
+  runCmsp();
 }

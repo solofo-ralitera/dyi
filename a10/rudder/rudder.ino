@@ -7,19 +7,22 @@
 // https://liveelectronics.musinou.net/MIDIdeviceName.php
 
 Joystick_ joystick (JOYSTICK_DEFAULT_REPORT_ID, JOYSTICK_TYPE_JOYSTICK,
-  128, 0, // Button Count, Hat Switch Count
+  64, 0, // Button Count, Hat Switch Count
   false, // X
   false, // Y
   false, //Z Axis
   false, // Rx
   false, // Ry
-  false,   // Rz
-  true, // rudder
-  false, // throttle
+  true,   // Rz
+  false, // rudder
+  true, // throttle
   false, // Accelerator, 
-  true, // brake 
+  false, // brake 
   false // steering
 );
+
+int LastRudder = 512;
+int CurrentRudder = 512;
 
 void setup() {
   Serial.begin(9600);
@@ -32,13 +35,13 @@ void setup() {
   // joystick.setXAxisRange(-127, 127);
   // joystick.setYAxisRange(-127, 127);
   // joystick.setZAxisRange(-127, 127);
-  // joystick.setRxAxisRange(-127, 127);
+  joystick.setRzAxisRange(0, 1023);
   // joystick.setRyAxisRange(-127, 127);
   // joystick.setRzAxisRange(-127, 127);
-  joystick.setRudderRange(0, 1023);
-  // joystick.setThrottleRange(0, 765);
+  // joystick.setRudderRange(0, 1023);
+  joystick.setThrottleRange(0, 765);
   // joystick.setAcceleratorRange(0, 765);
-  joystick.setBrakeRange(0, 1023);
+  // joystick.setBrakeRange(0, 765);
   // joystick.setSteeringRange(-127, 127);
 
   joystick.begin();
@@ -48,17 +51,18 @@ void setup() {
   // joystick.setZAxis(0);
   // joystick.setRxAxis(0);
   // joystick.setRyAxis(0);
-  // joystick.setRzAxis(0);
-  joystick.setRudder(0);
+  joystick.setRzAxis(CurrentRudder);
+  // joystick.setRudder(0);
   // joystick.setThrottle(0);
   // joystick.setAccelerator(0);
-  joystick.setBrake(0);
+  // joystick.setBrake(100);
   // joystick.setSteering(0);
 
   //Wait for all slaves (?)
   delay(1000);
 
 }
+
 void loop() {
   // CLucth is rudder left
   static long analogMeanClutch = 0;
@@ -92,7 +96,6 @@ void loop() {
     analogNumSampleThrottle = 0;
   }
 
-
   static long analogMeanBrake = 0;
   static long analogNumSampleBrake = 0;
   static long analogSamplesBrake = 0;
@@ -102,21 +105,26 @@ void loop() {
     analogSamplesBrake += analogValueBrake;
     analogNumSampleBrake += 1;
   } else {
-    brake = min(1023, max(0, map(analogSamplesBrake / ANALOG_SAMPLE, 1000, 210, 0, 1023)));
-    joystick.setBrake(brake);
-    
+    brake = min(765, max(0, map(analogSamplesBrake / ANALOG_SAMPLE, 1000, 210, 0, 765)));
+    joystick.setThrottle(brake);
+   
     analogSamplesBrake = 0;
     analogNumSampleBrake = 0;
   }
 
   if (clutch > throttle) {
+    CurrentRudder = 511 - (clutch - throttle);
     // Rudder left
-    joystick.setRudder(clutch);
   } else if (throttle > clutch) {
+    CurrentRudder = 511 + (throttle - clutch);
     // rudder right
-    joystick.setRudder(511 + throttle);
   } else {
-    joystick.setRudder(512);
+    CurrentRudder = 512;
+  }
+
+  if (LastRudder != CurrentRudder) {
+    joystick.setRzAxis(CurrentRudder);
+    LastRudder = CurrentRudder;
   }
 
 }

@@ -9,13 +9,17 @@
   
   If you can, use the IRQ Serial connection instead.
 */
-#define DCSBIOS_IRQ_SERIAL
-// #define DCSBIOS_DEFAULT_SERIAL
+// #define DCSBIOS_IRQ_SERIAL
+#define DCSBIOS_DEFAULT_SERIAL
+
+#define DCSBIOS_DISABLE_SERVO
 
 #include "DcsBios.h"
 #include "TftDisplay.h"
 
 #include "Radios.h"
+
+#include "modules/ledMatrix.h"
 #include "modules/Arc210.h"
 #include "modules/Uhf.h"
 #include "modules/VhfFm.h"
@@ -23,11 +27,10 @@
 #include "modules/Tacan.h"
 #include "modules/intercomPanel.h"
 #include "modules/CheckLists.h"
-
-#include "modules/ledMatrix.h"
 #include "modules/servoIndicators.h"
 
 TftDisplay display;
+LedMatrix ledMatrix;
 
 // Switch arc210 vs vhf am, A-10C et A-10C II
 Arc210 arc210(&display, false);
@@ -46,7 +49,9 @@ CheckLists checklists(&display);
 // 3: ILS
 // 4: TACAN
 // 5: Intercom
-// 6: Checklists
+// 6: Checklists (main menu)
+//    61: fuel
+//    62: nvg
 int currentRadio = 6;
 
 void deactivateAllModules() {
@@ -122,8 +127,8 @@ void activateCheckLists() {
   if (checklists.isActive) return;
   deactivateAllModules();
   display.printRadioTitle(checklists.title);
-  checklists.activate();
-  currentRadio = 6;
+  checklists.activate(&currentRadio);
+  // currentRadio = 6;
 }
 
 ///////////// Arc-210 ////////////////////
@@ -299,88 +304,104 @@ DcsBios::IntegerBuffer intercomVhfVolumeBuffer(A_10C_INT_VHF_VOL, [](unsigned in
 *****************************************************/
 // Landing gear
 DcsBios::IntegerBuffer landingGearLSafeBuffer(A_10C_GEAR_L_SAFE, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_LANDING_GEAR_L_SAFE, newValue);
+  ledMatrix.set(LED_MATRIX_LANDING_GEAR_L_SAFE, newValue);
 });
 DcsBios::IntegerBuffer landingGearNSafeBuffer(A_10C_GEAR_N_SAFE, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_LANDING_GEAR_N_SAFE, newValue);
+  ledMatrix.set(LED_MATRIX_LANDING_GEAR_N_SAFE, newValue);
 });
 DcsBios::IntegerBuffer landingGearRSafeBuffer(A_10C_GEAR_R_SAFE, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_LANDING_GEAR_R_SAFE, newValue);
+  ledMatrix.set(LED_MATRIX_LANDING_GEAR_R_SAFE, newValue);
 });
 DcsBios::IntegerBuffer antiskidBuffer(A_10C_ANTI_SKID_SWITCH, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_ANTISKID, newValue);
+  ledMatrix.set(LED_MATRIX_ANTISKID, newValue);
 });
 DcsBios::IntegerBuffer handleGearWarningBuffer(A_10C_HANDLE_GEAR_WARNING, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_HANDLE_GEAR_WARNING, newValue);
+  ledMatrix.set(LED_MATRIX_HANDLE_GEAR_WARNING, newValue);
 });
 DcsBios::IntegerBuffer flapsPosBuffer(A_10C_FLAP_POS, [](unsigned int newValue) {
     servoIndicatosSetFlaps(newValue);
 });
 // SAS
 DcsBios::IntegerBuffer yawSasLBuffer(A_10C_SASP_YAW_SAS_L, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_YAW_SAS_ENGAGE_L, newValue);
+  ledMatrix.set(LED_MATRIX_YAW_SAS_ENGAGE_L, newValue);
 });
 DcsBios::IntegerBuffer yawSasRBuffer(A_10C_SASP_YAW_SAS_R, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_YAW_SAS_ENGAGE_R, newValue);
+  ledMatrix.set(LED_MATRIX_YAW_SAS_ENGAGE_R, newValue);
 });
 DcsBios::IntegerBuffer pitchSasLBuffer(A_10C_SASP_PITCH_SAS_L, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_PITCH_SAS_ENGAGE_L, newValue);
+  ledMatrix.set(LED_MATRIX_PITCH_SAS_ENGAGE_L, newValue);
 });
 DcsBios::IntegerBuffer pitchSasRBuffer(A_10C_SASP_PITCH_SAS_R, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_PITCH_SAS_ENGAGE_R, newValue);
+  ledMatrix.set(LED_MATRIX_PITCH_SAS_ENGAGE_R, newValue);
 });
 // LASTE
 DcsBios::IntegerBuffer eacBuffer(A_10C_LASTE_EAC, [](unsigned int newValue) {
   // For eac, lit only if disabled
-  ledMatrixSet(LED_MATRIX_EAC, newValue == 1 ? false : true);
+  ledMatrix.set(LED_MATRIX_EAC, newValue == 1 ? false : true);
 });
 //UFC
 DcsBios::IntegerBuffer masterCautionBuffer(A_10C_MASTER_CAUTION, [](unsigned int newValue) {
   // For eac, lit only if disabled
-  ledMatrixSet(LED_MATRIX_MASTER_CAUTION, newValue);
+  ledMatrix.set(LED_MATRIX_MASTER_CAUTION, newValue);
 });
 // External lights
 DcsBios::IntegerBuffer extStrobeLeftBuffer(A_10C_EXT_STROBE_LEFT, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_EXT_STROBE_LEFT, newValue);
+  ledMatrix.set(LED_MATRIX_EXT_STROBE_LEFT, newValue);
 });
 DcsBios::IntegerBuffer extStrobeRightBuffer(A_10C_EXT_STROBE_RIGHT, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_EXT_STROBE_RIGHT, newValue);
+  ledMatrix.set(LED_MATRIX_EXT_STROBE_RIGHT, newValue);
 });
 DcsBios::IntegerBuffer extPositionRightBuffer(A_10C_EXT_POSITION_LIGHT_RIGHT, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_EXT_POSITION_RIGHT, newValue);
+  ledMatrix.set(LED_MATRIX_EXT_POSITION_RIGHT, newValue);
 });
 DcsBios::IntegerBuffer extPositionLeftBuffer(A_10C_EXT_POSITION_LIGHT_LEFT, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_EXT_POSITION_LEFT, newValue);
+  ledMatrix.set(LED_MATRIX_EXT_POSITION_LEFT, newValue);
 });
 // NMPSP
 DcsBios::IntegerBuffer tislBuffer(A_10C_NMSP_TISL_LED, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_TISL, newValue);
+  ledMatrix.set(LED_MATRIX_TISL, newValue);
 });
 DcsBios::IntegerBuffer ilsBuffer(A_10C_NMSP_ILS_LED, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_ILS, newValue);
+  ledMatrix.set(LED_MATRIX_ILS, newValue);
 });
 DcsBios::IntegerBuffer egiBuffer(A_10C_NMSP_EGI_LED, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_EGI, newValue);
+  ledMatrix.set(LED_MATRIX_EGI, newValue);
 });
 DcsBios::IntegerBuffer tcnBuffer(A_10C_NMSP_TCN_LED, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_TCN, newValue);
+  ledMatrix.set(LED_MATRIX_TCN, newValue);
 });
 DcsBios::IntegerBuffer anchrBuffer(A_10C_NMSP_ANCHR_LED, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_ANCHR, newValue);
+  ledMatrix.set(LED_MATRIX_ANCHR, newValue);
 });
 DcsBios::IntegerBuffer strptBuffer(A_10C_NMSP_STEERPT_LED, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_STRPT, newValue);
+  ledMatrix.set(LED_MATRIX_STRPT, newValue);
 });
 DcsBios::IntegerBuffer harsBuffer(A_10C_NMSP_HARS_LED, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_HARS, newValue);
+  ledMatrix.set(LED_MATRIX_HARS, newValue);
 });
 // Emer brake
 DcsBios::IntegerBuffer emerbrakeBuffer(A_10C_EMER_BRAKE, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_EMERBRAKE, newValue);
+  ledMatrix.set(LED_MATRIX_EMERBRAKE, newValue);
 });
 // APU
 DcsBios::IntegerBuffer apuBuffer(A_10C_APU_RPM, [](unsigned int newValue) {
-  ledMatrixSet(LED_MATRIX_APU, map(newValue, 0, 65535, 0, 100) > 80 ? 1 : 0);
+  ledMatrix.set(LED_MATRIX_APU, map(newValue, 0, 65535, 0, 100) > 80 ? 1 : 0);
+});
+////////////// FUEL
+DcsBios::IntegerBuffer fuelQty100Buffer(A_10C_FUEL_QTY_100, [](unsigned int newValue) {
+  checklists.setFuel100(map(newValue, 0, 65535, 0, 1000));
+});
+DcsBios::IntegerBuffer fuelQty1000Buffer(A_10C_FUEL_QTY_1000, [](unsigned int newValue) {
+  checklists.setFuel1000(map(newValue, 0, 65535, 0, 10000));
+});
+DcsBios::IntegerBuffer fuelQty10000Buffer(A_10C_FUEL_QTY_10000, [](unsigned int newValue) {
+  checklists.setFuel10000(map(newValue, 0, 65535, 0, 100000));
+});
+DcsBios::IntegerBuffer lEngFuelFlowBuffer(A_10C_L_ENG_FUEL_FLOW, [](unsigned int newValue) {
+  checklists.setFuelFlowL(map(newValue, 0, 65535, 0, 5000));
+});
+DcsBios::IntegerBuffer rEngFuelFlowBuffer(A_10C_R_ENG_FUEL_FLOW, [](unsigned int newValue) {
+  checklists.setFuelFlowR(map(newValue, 0, 65535, 0, 5000));
 });
 
 Radios::Radios()
@@ -388,7 +409,7 @@ Radios::Radios()
 }
 
 void Radios::startScreenAndBios() {
-  ledMatrixInit();
+  ledMatrix.init();
   servoIndicatorsInit();
 
   display.begin();
@@ -400,6 +421,8 @@ void Radios::startScreenAndBios() {
 
 void Radios::run() {
   DcsBios::loop();
+
+  checklists.refreshScreen();
 }
 
 
@@ -471,17 +494,43 @@ unsigned int Radios::getUHFSecondaryMode() {
 
 void Radios::displayCheckListsTopScreenBtn() {
   checklists.onTopScreenBtn();
+  checklists.setRadioMenu(&currentRadio);
 }
 void Radios::displayCheckListsMiddleScreenBtn() {
   checklists.onMiddleScreenBtn();
+  checklists.setRadioMenu(&currentRadio);
 }
 void Radios::displayCheckListsBottomScreenBtn() {
-  checklists.onBottomScreenBtn();
+  checklists.onBottomScreenBtn(&ledMatrix);
+  checklists.setRadioMenu(&currentRadio);
 }
 void Radios::displayCheckListsMenuBtn() {
   checklists.printMainMenu();
+  checklists.setRadioMenu(&currentRadio);
 }
 
 void Radios::displayCheckListsPage(int page) {
   checklists.onPageChange(page);
+  checklists.setRadioMenu(&currentRadio);
 }
+/*
+void Radios::onCheckListChannelPress() {
+    switch (checklists.getCurrentMenu())
+    {
+        case 1: // Fuel
+          sendDcsCommand("FQIS_TEST", "1");
+        default:
+            break;
+    }
+}
+
+void Radios::onCheckListChannelRelease() {
+    switch (checklists.getCurrentMenu())
+    {
+        case 1: // Fuel
+          sendDcsCommand("FQIS_TEST", "0");
+        default:
+            break;
+    }
+}
+*/

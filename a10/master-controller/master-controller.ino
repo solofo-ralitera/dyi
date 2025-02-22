@@ -78,9 +78,49 @@ void loop() {
   static SlaveModule ahcpAndLandingGear(4, 3, 51, 21, ahcpDataI2CConfig);
   ahcpAndLandingGear.readModule(&joystick);
 
-  static int radioDataI2CConfig[1] = {CMD_BTN};
-  static SlaveModule radio(5, 1, 72, 3, radioDataI2CConfig);
-  radio.readModule(&joystick);
+  static int radioDataI2CConfig[2] = {CMD_BTN, CMD_KEYBOARD};
+  static SlaveModule radio(5, 2, 72, 3, radioDataI2CConfig);
+  static bool radiocurrentRSHKeyPress = 0;
+  static bool radiocurrentRARSHKeyPress = 0;
+  static bool radiocurrentRCRSHKeyPress = 0;
+  radio.readModule(&joystick, 0, [](byte bitValue, int bitPosition) {
+    if (bitValue == 0) {
+      if (bitPosition == 8) radiocurrentRSHKeyPress = 0;
+      if (bitPosition == 9) radiocurrentRARSHKeyPress = 0;
+      if (bitPosition == 10) radiocurrentRCRSHKeyPress = 0;
+    } else {
+      if (bitPosition == 8) {
+        // toogle: rshift + h
+        if (radiocurrentRSHKeyPress == 0) {
+          Keyboard.press(KEY_RIGHT_SHIFT);
+          Keyboard.press('h');
+          delay(50);
+          Keyboard.releaseAll();
+          radiocurrentRSHKeyPress = 1;
+        }
+      } else if (bitPosition == 9) {
+        // dec: ralt + rshift + h
+        if (radiocurrentRARSHKeyPress == 0) {
+          Keyboard.press(KEY_RIGHT_ALT);
+          Keyboard.press(KEY_RIGHT_SHIFT);
+          Keyboard.press('h');
+          delay(50);
+          Keyboard.releaseAll();
+          radiocurrentRARSHKeyPress = 2;
+        }
+      } else if (bitPosition == 10) {
+        // inc: rctrl + rshift + h
+        if (radiocurrentRCRSHKeyPress == 0) {
+          Keyboard.press(KEY_RIGHT_CTRL);
+          Keyboard.press(KEY_RIGHT_SHIFT);
+          Keyboard.press('h');
+          delay(50);
+          Keyboard.releaseAll();
+          radiocurrentRCRSHKeyPress = 3;
+        }
+      } 
+    }
+  });
 
   // Ufc 44 btns
   static int ufcDataI2CConfig[6] = {CMD_BTN, CMD_BTN, CMD_BTN, CMD_BTN, CMD_BTN, CMD_BTN};

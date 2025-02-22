@@ -131,8 +131,10 @@ void loop() {
   static PushButton rdr(I2C_DATA, BUTTON_INDEX[BTN_IDX_RDR_NRM]);  
   rdr.run(bitRead(PIND, PIND6));
   // D4
-  static PushButton autoPilotButton(I2C_DATA, BUTTON_INDEX[BTN_IDX_AUTOPILOT_ENGAGE]);  
-  autoPilotButton.run(bitRead(PIND, PIND4));
+  static AutoReleaseSwitch autoPilotButton(bitRead(PIND, PIND4), I2C_DATA, BUTTON_INDEX[BTN_IDX_AUTOPILOT_ENGAGE]);
+  autoPilotButton.run(bitRead(PIND, PIND4), &currentMillis);
+  // static PushButton autoPilotButton(I2C_DATA, BUTTON_INDEX[BTN_IDX_AUTOPILOT_ENGAGE]);  
+  // autoPilotButton.run(bitRead(PIND, PIND4));
   // D2
   // static AutoReleaseSwitch autoPilotPathSwitch(bitRead(PIND, PIND2), I2C_DATA, BUTTON_INDEX[BTN_IDX_AUTOPILOT_PATH]);
   // autoPilotPathSwitch.run(bitRead(PIND, PIND2), &currentMillis, BUTTON_INDEX[BTN_IDX_AUTOPILOT_ALTHDG]);
