@@ -9,10 +9,28 @@ int analogValue = 0;
 void setup() {
   Serial.begin(9600);
 
-  pinMode(ANALOG_PIN, INPUT_PULLUP);
+  char* a = "AZERTY   T   FGHJKLMWXCV";
+  char* b = "AZDFTYUIOPQSDFGHJKLMWXCV";
+  for (int i = 0; i <= 23; i++) {
+    if (a[i] != b[i]) {
+      Serial.println(b[i]);
+      b[i] = a[i];
+    }
+  }
+  delay(1000);
+  Serial.println(a);
+  Serial.println(b);
+  delay(1000);
+  a[0] = "1";
+  a[2] = ".";
+  Serial.println(a);
+  Serial.println(b);
+  delay(1000);
+  // pinMode(ANALOG_PIN, INPUT_PULLUP);
 }
 
 void loop() {
+  /*
   analogValue = analogRead(ANALOG_PIN);
 
   if (numSample < ANALOG_SAMPLE) {
@@ -30,4 +48,5 @@ void loop() {
 
     Serial.println(analogMean);
   }
+  */
 }
