@@ -11,10 +11,26 @@
 
 // Wiring
 // https://www.youtube.com/watch?v=pmCc7z_Mi8I&t=2s&ab_channel=TheLastOutpostWorkshop
+/**
+VCC 3.3V
+GND GND
+DIN/SDA/MOSI 23
+CLK/SCK/SCL 18
+CS  15 one pin for each display
+DC  2
+RST 4 
+*/
+// or https://www.youtube.com/watch?v=k2c2zCmC_X0
 // Rotate sprite
 // https://www.youtube.com/watch?v=oqBa_ptBmLU&ab_channel=VolosProjects
 // Image to byte array
 // http://www.rinkydinkelectronics.com/t_imageconverter565.php
+/**
+TFT_eSPI
+User_Setup: uncomment #define GC9A01_DRIVER
+User_Setup_Select: uncomment #include <User_Setups/Setup46_GC9A01_ESP32.h>
+*/
+
 
 TFT_eSprite sprHsi = TFT_eSprite(&tft);
 TFT_eSprite sprHsiHeading = TFT_eSprite(&tft);
@@ -23,19 +39,20 @@ TFT_eSprite sprHsiBearing1 = TFT_eSprite(&tft);
 TFT_eSprite sprHsiBearing2 = TFT_eSprite(&tft);
 TFT_eSprite sprHsiCourseArrow = TFT_eSprite(&tft);
 
+unsigned long hsiCurrentTimestamp = millis();
+unsigned long hsiLastTimestamp = 0;
+int hsiCurrentAngleHeading = 0;
+int hsiCurrentAngleBearing1 = 0;
+int hsiCurrentAngleBearing2 = 0;
+int hsiCurrentAngleCourseArrow = 0;
+
 void setup1_Hsi() {
-  /*
-  pinMode(15, OUTPUT);
-  digitalWrite(15, LOW);
-  */
   pinMode(TFT_CS_HSI, OUTPUT);
   digitalWrite(TFT_CS_HSI, LOW);
-
 }
 
 void initScreen_Hsi() {
   digitalWrite(TFT_CS_HSI, HIGH);
-
 
   sprHsi.setColorDepth(8);
   sprHsi.createSprite(240, 240);
@@ -88,19 +105,27 @@ void drawBearing(int angle1, int angle2) {
 }
 
 void drawCourseArrow(int angle) {
-  sprHsiCourseArrow.pushRotated(&sprHsi, angle, TFT_BLACK);
-  sprHsi.drawNumber(angle >= 360 ? (angle - 360) : (angle < 0 ? 360 + angle : angle), 130, 130, 2);
+  sprHsiCourseArrow.pushRotated(&sprHsi, hsiCurrentAngleHeading + angle, TFT_BLACK);
+  sprHsi.drawNumber(angle, 130, 130, 2);
 }
 
-void drawHsi(int angleHeading, int angleBearing1, int angleBearing2, int angleCourseArrow) {
+void drawHsi() {
+  // draw each xx millis
+  hsiCurrentTimestamp = millis();
+  // 10fps => 100ms
+  if (hsiCurrentTimestamp - hsiLastTimestamp < 100) {
+    return;
+  }
+  hsiLastTimestamp = hsiCurrentTimestamp;
+
   digitalWrite(TFT_CS_HSI, LOW);
 
   sprHsi.fillSprite(TFT_BLACK);
 
-  drawHeading(angleHeading);
+  drawHeading(hsiCurrentAngleHeading);
   drawPlane();
-  drawBearing(angleBearing1, angleBearing2);
-  drawCourseArrow(angleCourseArrow);
+  drawBearing(hsiCurrentAngleBearing1, hsiCurrentAngleBearing2);
+  drawCourseArrow(hsiCurrentAngleCourseArrow);
 
   sprHsi.pushSprite(0, 0);
 
