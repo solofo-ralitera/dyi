@@ -38,6 +38,7 @@ TFT_eSprite sprHsiHeading = TFT_eSprite(&tft);
 TFT_eSprite sprHsiBearing1 = TFT_eSprite(&tft);
 TFT_eSprite sprHsiBearing2 = TFT_eSprite(&tft);
 TFT_eSprite sprHsiCourseArrow = TFT_eSprite(&tft);
+TFT_eSprite sprHsiDeviation = TFT_eSprite(&tft);
 
 unsigned long hsiCurrentTimestamp = millis();
 unsigned long hsiLastTimestamp = 0;
@@ -45,6 +46,10 @@ int hsiCurrentAngleHeading = 0;
 int hsiCurrentAngleBearing1 = 0;
 int hsiCurrentAngleBearing2 = 0;
 int hsiCurrentAngleCourseArrow = 0;
+int hsiCurrentDeviation = 0; // [55-55]
+bool hsiCurrentBearingFlag = true;
+bool hsiCurrentPowerOff = true;
+int hsiRangeCounter = 0; // [55-55]
 
 void setup1_Hsi() {
   pinMode(TFT_CS_HSI, OUTPUT);
@@ -63,27 +68,33 @@ void initScreen_Hsi() {
   sprHsiHeading.createSprite(200, 200);
   sprHsiHeading.setSwapBytes(true);
   sprHsiHeading.setPivot(100, 100);
-  sprHsiHeading.fillSmoothCircle(100, 100, 100, TFT_BLACK);
+  // sprHsiHeading.fillSmoothCircle(100, 100, 100, TFT_BLACK);
   sprHsiHeading.pushImage(0, 0, 200, 200, hsi_heading_background);
 
   sprHsiBearing1.setColorDepth(8);
   sprHsiBearing1.createSprite(3, 20);
   sprHsiBearing1.setSwapBytes(true);
-  sprHsiBearing1.fillSprite(TFT_DARKGREY);
+  sprHsiBearing1.fillSprite(TFT_SILVER);
   sprHsiBearing1.setPivot(2, 120);
 
   sprHsiBearing2.setColorDepth(8);
   sprHsiBearing2.createSprite(15, 8);
   sprHsiBearing2.setSwapBytes(true);
-  sprHsiBearing2.fillSprite(TFT_DARKGREY);
-  sprHsiBearing2.setPivot(8, 106);
+  sprHsiBearing2.fillSprite(TFT_SILVER);
+  sprHsiBearing2.setPivot(8, 110);
 
   sprHsiCourseArrow.setColorDepth(8);
   sprHsiCourseArrow.createSprite(5, 150);
   sprHsiCourseArrow.setSwapBytes(true);
   sprHsiCourseArrow.setPivot(2, 79);
-  sprHsiCourseArrow.drawWedgeLine(2, 0, 2, 20, 1, 5, TFT_WHITE);
-  sprHsiCourseArrow.drawWedgeLine(2, 139, 2, 150, 5, 5, TFT_WHITE);
+  sprHsiCourseArrow.drawWedgeLine(2, 0, 2, 20, 1, 5, TFT_SILVER);
+  sprHsiCourseArrow.drawWedgeLine(2, 139, 2, 150, 5, 5, TFT_SILVER);
+
+  sprHsiDeviation.setColorDepth(8);
+  sprHsiDeviation.createSprite(5, 100);
+  sprHsiDeviation.setSwapBytes(true);
+  // sprHsiDeviation.setPivot(2, 79);
+  sprHsiDeviation.fillSprite(TFT_SILVER);  
 }
 
 
@@ -105,15 +116,24 @@ void drawBearing(int angle1, int angle2) {
 }
 
 void drawCourseArrow(int angle) {
+  if (hsiCurrentBearingFlag) {
+    sprHsi.fillRect(110, 80, 20, 10, TFT_RED);
+  }
+
   sprHsiCourseArrow.pushRotated(&sprHsi, hsiCurrentAngleHeading + angle, TFT_BLACK);
-  sprHsi.drawNumber(angle, 130, 130, 2);
+  // Deviation
+  sprHsiDeviation.setPivot(hsiCurrentDeviation, 50);
+  sprHsiDeviation.pushRotated(&sprHsi, hsiCurrentAngleHeading + angle, TFT_BLACK);
+  
+  sprHsi.drawNumber(angle, 150, 130, 2);
+  // sprHsi.drawNumber(hsiRangeCounter, 60, 130, 2);  
 }
 
 void drawHsi() {
   // draw each xx millis
   hsiCurrentTimestamp = millis();
   // 10fps => 100ms
-  if (hsiCurrentTimestamp - hsiLastTimestamp < 100) {
+  if (hsiCurrentTimestamp - hsiLastTimestamp < 50) {
     return;
   }
   hsiLastTimestamp = hsiCurrentTimestamp;
@@ -121,11 +141,14 @@ void drawHsi() {
   digitalWrite(TFT_CS_HSI, LOW);
 
   sprHsi.fillSprite(TFT_BLACK);
+  if (hsiCurrentPowerOff) {
+    sprHsi.fillRect(200, 0, 40, 240, TFT_RED);
+  }
 
   drawHeading(hsiCurrentAngleHeading);
-  drawPlane();
   drawBearing(hsiCurrentAngleBearing1, hsiCurrentAngleBearing2);
   drawCourseArrow(hsiCurrentAngleCourseArrow);
+  drawPlane();
 
   sprHsi.pushSprite(0, 0);
 
