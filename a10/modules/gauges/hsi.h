@@ -5,6 +5,8 @@
 #include "hsi_heading_background.h"
 
 #define TFT_CS_HSI 15
+// HSI 19
+// engine gauges R: 22, L: 21
 
 #define HSI_RADIUS 100
 #define HSI_TEXT_OFFSET 10

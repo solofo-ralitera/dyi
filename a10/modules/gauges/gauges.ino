@@ -9,8 +9,15 @@
 #include <SPI.h>
 #include <TFT_eSPI.h>
 TFT_eSPI tft;           // A single instance is used for all displays
+TFT_eSprite sprEngineR = TFT_eSprite(&tft);
+TFT_eSprite sprEngineL = TFT_eSprite(&tft);
+TFT_eSprite sprEngineValueR = TFT_eSprite(&tft);
+TFT_eSprite sprEngineValueL = TFT_eSprite(&tft);
 
 #include "hsi.h"
+#include "engine.h"
+Engine engineR(&tft, &sprEngineR, &sprEngineValueR, 22); 
+Engine engineL(&tft, &sprEngineL, &sprEngineValueL, 21); 
 
 DcsBios::IntegerBuffer hsiHdgBuffer(A_10C_HSI_HDG, [](unsigned int newValue) {
   hsiCurrentAngleHeading = map(newValue, 65535, 0, 359, 1);
@@ -56,49 +63,64 @@ DcsBios::IntegerBuffer hsiPwroffFlagBuffer(A_10C_HSI_PWROFF_FLAG, [](unsigned in
   hsiCurrentPowerOff = newValue ? true : false;
   drawHsi();
 });
-/*
-// Range counter
-int hsiRangeCounter1 = 0;
-int hsiRangeCounter10 = 0;
-int hsiRangeCounter100 = 0;
-int hsiRangeCounter1000 = 0;
-DcsBios::IntegerBuffer hsiRcDBuffer(A_10C_HSI_RC_D, [](unsigned int newValue) {
-  hsiRangeCounter1 = round(map(newValue, 0, 65535, 0, 100) / 10);
-  hsiRangeCounter = hsiRangeCounter1 + hsiRangeCounter10 + hsiRangeCounter100 + hsiRangeCounter1000;
-  drawHsi();
-});
-DcsBios::IntegerBuffer hsiRcCBuffer(A_10C_HSI_RC_C, [](unsigned int newValue) {
-  hsiRangeCounter10 = round(map(newValue, 0, 65535, 0, 100) / 10) * 10;
-  hsiRangeCounter = hsiRangeCounter1 + hsiRangeCounter10 + hsiRangeCounter100 + hsiRangeCounter1000;
-  drawHsi();
-});
-DcsBios::IntegerBuffer hsiRcBBuffer(A_10C_HSI_RC_B, [](unsigned int newValue) {
-  hsiRangeCounter100 = round(map(newValue, 0, 65535, 0, 100) / 10) * 100;
-  hsiRangeCounter = hsiRangeCounter1 + hsiRangeCounter10 + hsiRangeCounter100 + hsiRangeCounter1000;
-  drawHsi();
-});
-DcsBios::IntegerBuffer hsiRcABuffer(A_10C_HSI_RC_A, [](unsigned int newValue) {
-  hsiRangeCounter1000 = round(map(newValue, 0, 65535, 0, 100) / 10) * 1000;
-  hsiRangeCounter = hsiRangeCounter1 + hsiRangeCounter10 + hsiRangeCounter100 + hsiRangeCounter1000;
-  drawHsi();
-});
-*/
+
+//// Engine GAUGES
+
+
 void setup() {
   setup1_Hsi();
+  engineR.init();
+  engineL.init();
 
   tft.init();
 
   tft.fillScreen(TFT_BLACK);
   tft.setRotation(2);
   tft.setSwapBytes(true);
+  tft.setPivot(120, 120);
+  tft.initDMA();
 
   initScreen_Hsi();
+  engineR.initScreen();
+  engineL.initScreen();
 
   DcsBios::setup();
 
   drawHsi();
+  engineL.changeDisplay(2);
+  engineR.changeDisplay(2);
+
 }
 
+// int current = 0;
+// int currentDisplay = 0;
 void loop() {
   DcsBios::loop();
+  /*
+  engineL.setOilPressure(current);
+  engineR.setOilPressure(current);
+
+  engineL.setCoreSpeed(current);
+  engineR.setCoreSpeed(current);
+
+  engineL.setFanSpeed(current);
+  engineR.setFanSpeed(current);
+
+  engineL.setItt(current);
+  engineR.setItt(current);
+
+  engineL.setFuelFlow(current);
+  engineR.setFuelFlow(current);
+
+  if (current > 65535) {
+    current = 0;
+    currentDisplay++;
+    if (currentDisplay > 4) currentDisplay = 0;
+    engineL.changeDisplay(currentDisplay);
+    engineR.changeDisplay(currentDisplay);
+  }
+  current++;
+
+  // delay(1);
+  */
 }
