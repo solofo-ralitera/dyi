@@ -110,10 +110,10 @@ void drawPlane() {
   sprHsi.fillRect(110, 146, 20, 4, TFT_DARKGREY); // V tail
 
   // Repère NSEW
-  sprHsi.drawCircle(120, 0, 3, TFT_LIGHTGREY);
-  sprHsi.drawCircle(120, 239, 3, TFT_LIGHTGREY);
-  sprHsi.drawCircle(239, 120, 3, TFT_LIGHTGREY);
-  sprHsi.drawCircle(0, 120, 3, TFT_LIGHTGREY);
+  sprHsi.drawCircle(119, -1, 3, TFT_LIGHTGREY);
+  sprHsi.drawCircle(119, 241, 3, TFT_LIGHTGREY);
+  sprHsi.drawCircle(241, 119, 3, TFT_LIGHTGREY);
+  sprHsi.drawCircle(-1, 119, 3, TFT_LIGHTGREY);
 }
 
 void drawHeading(int angle) {

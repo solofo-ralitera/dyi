@@ -13,6 +13,7 @@
 #define ENGINE_MAX_FAN_SPEED 100
 #define ENGINE_MAX_ITT 110 // * CX 100
 #define ENGINE_MAX_FUEL_FLOW 50 // * 100 ppm
+#define ENGINE_MAX_HYD_PRESSURE 4000
 
 int E_ANGLE_100 = ENGINE_GAUGE_END_ANGLE - ENGINE_GAUGE_START_ANGLE; // 200
 
@@ -113,6 +114,25 @@ class Engine
       tft->setTextColor(TFT_WHITE, TFT_BLACK);
     }
     
+    int hydPressure = 0;
+    void setHydPressure(unsigned int biosValue) {
+      hydPressure = map(biosValue, 0, 65535, 0, ENGINE_MAX_HYD_PRESSURE);
+      updateEngine();
+    };
+    void drawHydPress() {
+      // Hys Press
+      if (hydPressure < 2800) tft->setTextColor(TFT_LIGHTGREY, TFT_RED);
+      else if (hydPressure >= 2800 && hydPressure <= 3450) tft->setTextColor(TFT_LIGHTGREY, TFT_DARKGREEN);
+      else tft->setTextColor(TFT_LIGHTGREY, TFT_ORANGE);
+      
+      tft->setTextSize(2);
+
+      tft->drawString(" HYD ", 115, 205, 2);
+      
+      tft->setTextColor(TFT_WHITE, TFT_BLACK);
+      tft->setTextSize(1);
+    }
+
     void updateEngine() {
       switch (currentDisplay) {
         case 0: updateEngine(currentOilPressureBiosValue); break;
@@ -143,6 +163,7 @@ class Engine
       spr->pushRotated(currentAngle);
 
       drawGaugesList();
+      drawHydPress();
 
       currentAngle = angle;
       // Draw pin
@@ -170,6 +191,7 @@ class Engine
         case 4: sprValue->drawString("PPH x 100", 5, 45, 2); break;
         default: break;
       }
+
       sprValue->pushSprite(40, 90);
 
       digitalWrite(pin, HIGH);
@@ -239,7 +261,7 @@ class Engine
       } else {
         // > 75% RPM (gauge par pas de 1%)
         fanSpeed = map(biosValue, 24358, 65535, 75, ENGINE_MAX_FAN_SPEED);
-        biosValue = 26379.714 + biosValue;
+        biosValue = 26380 + biosValue;
       }
       // fanSpeed = map(biosValue, 0, 65535, 0, ENGINE_MAX_FAN_SPEED);
 

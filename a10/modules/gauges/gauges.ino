@@ -112,7 +112,13 @@ DcsBios::IntegerBuffer lOilPressBuffer(A_10C_L_OIL_PRESS, [](unsigned int newVal
 DcsBios::IntegerBuffer rOilPressBuffer(A_10C_R_OIL_PRESS, [](unsigned int newValue) {
   engineR.setOilPressure(newValue);
 });
-
+// Hyd Pressure
+DcsBios::IntegerBuffer lHydPressBuffer(A_10C_L_HYD_PRESS, [](unsigned int newValue) {
+  engineL.setHydPressure(newValue);
+});
+DcsBios::IntegerBuffer rHydPressBuffer(A_10C_R_HYD_PRESS, [](unsigned int newValue) {
+  engineR.setHydPressure(newValue);
+});
 
 void setup() {
   setup1_Hsi();
