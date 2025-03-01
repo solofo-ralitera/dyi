@@ -9,11 +9,10 @@
 #define ENGINE_GAUGE_END_ANGLE 245
 
 #define ENGINE_MAX_OIL_PRESSURE 100
-#define ENGINE_MAX_CORE_SPEED 110
+#define ENGINE_MAX_CORE_SPEED 100
 #define ENGINE_MAX_FAN_SPEED 100
 #define ENGINE_MAX_ITT 110 // * CX 100
 #define ENGINE_MAX_FUEL_FLOW 50 // * 100 ppm
-
 
 int E_ANGLE_100 = ENGINE_GAUGE_END_ANGLE - ENGINE_GAUGE_START_ANGLE; // 200
 
@@ -45,10 +44,11 @@ class Engine
       sprValue->createSprite(80, 60);
       sprValue->setSwapBytes(true);
       
+      digitalWrite(pin, HIGH);
     };
 
     void drawScreen() {
-      digitalWrite(pin, HIGH);
+      // digitalWrite(pin, HIGH);
       digitalWrite(pin, LOW);
 
       tft->fillScreen(TFT_BLACK);
@@ -146,7 +146,7 @@ class Engine
 
       currentAngle = angle;
       // Draw pin
-      spr->drawWedgeLine(3, 0, 3, 25, 1, 7, TFT_LIGHTGREY, getCurrentColor());
+      spr->drawWedgeLine(3, 0, 3, 25, 1, 7, TFT_DARKGREY, TFT_LIGHTGREY);
       spr->pushRotated(currentAngle, TFT_BLACK);
 
       // Draw value
@@ -206,8 +206,8 @@ class Engine
       if (oilPressure < 30) oilPressureColor = TFT_LIGHTGREY;
       else if (oilPressure >= 30 && oilPressure < 40) oilPressureColor = TFT_RED;
       else if (oilPressure >= 40 && oilPressure < 55) oilPressureColor = TFT_YELLOW;
-      else if (oilPressure >= 55 && oilPressure <= 85) oilPressureColor = TFT_DARKGREEN;
-      else if (oilPressure > 85 && oilPressure <= 95) oilPressureColor = TFT_ORANGE;
+      else if (oilPressure >= 55 && oilPressure <= 95) oilPressureColor = TFT_DARKGREEN;
+      // else if (oilPressure > 85 && oilPressure <= 95) oilPressureColor = TFT_ORANGE;
       else oilPressureColor = TFT_RED;
 
       if (currentDisplay == 0) updateEngine(biosValue);
@@ -220,19 +220,28 @@ class Engine
       coreSpeed = map(biosValue, 0, 65535, 0, ENGINE_MAX_CORE_SPEED);
 
       if (coreSpeed < 56) coreSpeedColor = TFT_LIGHTGREY;
-      else if (coreSpeed >= 56 && coreSpeed <= 98) coreSpeedColor = TFT_DARKGREEN;
-      else if (coreSpeed > 98 && coreSpeed <= 100) coreSpeedColor = TFT_YELLOW;
-      else if (coreSpeed > 100 && coreSpeed <= 102) coreSpeedColor = TFT_ORANGE;
+      else if (coreSpeed >= 56 && coreSpeed <= 92) coreSpeedColor = TFT_DARKGREEN;
+      else if (coreSpeed > 92 && coreSpeed <= 98) coreSpeedColor = TFT_ORANGE;
       else coreSpeedColor = TFT_RED;
 
       if (currentDisplay == 1) updateEngine(biosValue);
     };
 
+    // !!! Gauge non linéraire
     int fanSpeed = 0;
     uint32_t fanSpeedColor = TFT_LIGHTGREY;
     void setFanSpeed(unsigned int biosValue) {
       currentFanSpeedBiosValue = biosValue;
-      fanSpeed = map(biosValue, 0, 65535, 0, ENGINE_MAX_FAN_SPEED);
+      if (biosValue <= 24358) {
+        // <= 75% RPM (gauge par pas de 5%)
+        fanSpeed = map(biosValue, 0, 24358, 0, 75);
+        biosValue *= 2.083;
+      } else {
+        // > 75% RPM (gauge par pas de 1%)
+        fanSpeed = map(biosValue, 24358, 65535, 75, ENGINE_MAX_FAN_SPEED);
+        biosValue = 26379.714 + biosValue;
+      }
+      // fanSpeed = map(biosValue, 0, 65535, 0, ENGINE_MAX_FAN_SPEED);
 
       if (fanSpeed < 25) fanSpeedColor = TFT_LIGHTGREY;
       else if (fanSpeed >= 25 && fanSpeed <= 95) fanSpeedColor = TFT_DARKGREEN;
@@ -242,11 +251,12 @@ class Engine
       if (currentDisplay == 2) updateEngine(biosValue);
     }    
 
+    //// !!! ne commence pas par 0
     int itt = 0;
     uint32_t ittColor = TFT_LIGHTGREY;
     void setItt(unsigned int biosValue) {
       currentITTBiosValue = biosValue;
-      itt = map(biosValue, 0, 65535, 0, ENGINE_MAX_ITT);
+      itt = map(biosValue, 0, 65535, 10, ENGINE_MAX_ITT) + 4; // + 4 Ajustemement du début à 10
 
       if (itt < 27.5) ittColor = TFT_LIGHTGREY;
       else if (itt >= 27.5 && itt <= 86.5) ittColor = TFT_DARKGREEN;
@@ -261,8 +271,9 @@ class Engine
       currentFuelFlowBiosValue = biosValue;
       fuelFlow = map(biosValue, 0, 65535, 0, ENGINE_MAX_FUEL_FLOW);
 
-      if (fuelFlow < 15) fuelFlowColor = TFT_LIGHTGREY;
-      else if (fuelFlow >= 15 && fuelFlow <= 41) fuelFlowColor = TFT_DARKGREEN;
+      if (fuelFlow < 3) fuelFlowColor = TFT_RED;
+      else if (fuelFlow >= 3 && fuelFlow <= 15) fuelFlowColor = TFT_LIGHTGREY;
+      else if (fuelFlow > 15 && fuelFlow <= 41) fuelFlowColor = TFT_DARKGREEN;
       else fuelFlowColor = TFT_ORANGE;
 
       if (currentDisplay == 4) updateEngine(biosValue);
@@ -294,13 +305,15 @@ class Engine
       // [55-85] Green
       tft->drawSmoothArc(ENGINE_GAUGE_CENTER,
         ENGINE_GAUGE_START_ANGLE + (55 * E_ANGLE_100 / ENGINE_MAX_OIL_PRESSURE),
-        ENGINE_GAUGE_START_ANGLE + (85 * E_ANGLE_100 / ENGINE_MAX_OIL_PRESSURE),
+        ENGINE_GAUGE_START_ANGLE + (95 * E_ANGLE_100 / ENGINE_MAX_OIL_PRESSURE),
         TFT_DARKGREEN, TFT_DARKGREEN, false);
+      /*
       // [85-95] Orange
       tft->drawSmoothArc(ENGINE_GAUGE_CENTER,
         ENGINE_GAUGE_START_ANGLE + (85 * E_ANGLE_100 / ENGINE_MAX_OIL_PRESSURE),
         ENGINE_GAUGE_START_ANGLE + (95 * E_ANGLE_100 / ENGINE_MAX_OIL_PRESSURE),
         TFT_ORANGE, TFT_ORANGE, false);
+      */
       // > 95 Red
       tft->drawSmoothArc(ENGINE_GAUGE_CENTER,
         ENGINE_GAUGE_START_ANGLE + (95 * E_ANGLE_100 / ENGINE_MAX_OIL_PRESSURE),
@@ -310,39 +323,40 @@ class Engine
 
     //  1: Engine Core Speed (% RPM)
       //  < 56 Red / White
-      //  [56-98] Green
-      //  [98-100] Yellow
-      //  [100-102] Orange (< 3seconds)
-      //  > 102 Red
+      //  [56-92] Green
+      //  [92-98] Orange
+      //  > 98 Red
     void coreSpeedGauge() {
       //  < 56 Red / White
       tft->drawSmoothArc(ENGINE_GAUGE_CENTER, 
         ENGINE_GAUGE_START_ANGLE,
         ENGINE_GAUGE_START_ANGLE + (56 * E_ANGLE_100 / ENGINE_MAX_CORE_SPEED),
         TFT_LIGHTGREY, TFT_LIGHTGREY, false);
-      //  [56-98] Green
+      //  [56-90] Green
       tft->drawSmoothArc(ENGINE_GAUGE_CENTER,
         ENGINE_GAUGE_START_ANGLE + (56 * E_ANGLE_100 / ENGINE_MAX_CORE_SPEED),
-        ENGINE_GAUGE_START_ANGLE + (98 * E_ANGLE_100 / ENGINE_MAX_CORE_SPEED),
+        ENGINE_GAUGE_START_ANGLE + (92 * E_ANGLE_100 / ENGINE_MAX_CORE_SPEED),
         TFT_DARKGREEN, TFT_DARKGREEN, false);        
-      //  [98-100] Yellow
+      //  [90-98] Orange
+      tft->drawSmoothArc(ENGINE_GAUGE_CENTER,
+        ENGINE_GAUGE_START_ANGLE + (92 * E_ANGLE_100 / ENGINE_MAX_CORE_SPEED),
+        ENGINE_GAUGE_START_ANGLE + (98 * E_ANGLE_100 / ENGINE_MAX_CORE_SPEED),
+        TFT_ORANGE, TFT_ORANGE, false);        
+      //  > 98 Red
       tft->drawSmoothArc(ENGINE_GAUGE_CENTER,
         ENGINE_GAUGE_START_ANGLE + (98 * E_ANGLE_100 / ENGINE_MAX_CORE_SPEED),
-        ENGINE_GAUGE_START_ANGLE + (100 * E_ANGLE_100 / ENGINE_MAX_CORE_SPEED),
-        TFT_YELLOW, TFT_YELLOW, false);        
-      //  [100-102] Orange
-      tft->drawSmoothArc(ENGINE_GAUGE_CENTER,
-        ENGINE_GAUGE_START_ANGLE + (100 * E_ANGLE_100 / ENGINE_MAX_CORE_SPEED),
-        ENGINE_GAUGE_START_ANGLE + (102 * E_ANGLE_100 / ENGINE_MAX_CORE_SPEED),
-        TFT_ORANGE, TFT_ORANGE, false);        
+        ENGINE_GAUGE_END_ANGLE, // ENGINE_GAUGE_START_ANGLE + (102 * E_ANGLE_100 / ENGINE_MAX_CORE_SPEED),
+        TFT_RED, TFT_RED, false);        
+      /*
       // > 102 Red
       tft->drawSmoothArc(ENGINE_GAUGE_CENTER,
         ENGINE_GAUGE_START_ANGLE + (102 * E_ANGLE_100 / ENGINE_MAX_CORE_SPEED),
         ENGINE_GAUGE_END_ANGLE,
-        TFT_RED, TFT_RED, false);
+        TFT_RED, TFT_RED, false);*/
     };
 
     //  2: Fan Speed (% RPM)
+    // TODO !!! non linéaire
       //  < 25 Red / White
       //  [25-95] Green (82% at takeoff)
       //  [95-100] Orange
@@ -398,13 +412,18 @@ class Engine
     };
 
     //  4: Fuel Flow (Pounds Per Hour)
-      //  < 1500 Red / WHite
+      //  [300-1500] White
       //  [1500-4100] Green
       //  > 4100 Orange
     void fuelFlowGauge() {
       //  < 1500 White
       tft->drawSmoothArc(ENGINE_GAUGE_CENTER, 
         ENGINE_GAUGE_START_ANGLE,
+        ENGINE_GAUGE_START_ANGLE + (3 * E_ANGLE_100 / ENGINE_MAX_FUEL_FLOW),
+        TFT_RED, TFT_RED, false);
+      //  [300-1500] Green
+      tft->drawSmoothArc(ENGINE_GAUGE_CENTER,
+        ENGINE_GAUGE_START_ANGLE + (3 * E_ANGLE_100 / ENGINE_MAX_FUEL_FLOW),
         ENGINE_GAUGE_START_ANGLE + (15 * E_ANGLE_100 / ENGINE_MAX_FUEL_FLOW),
         TFT_LIGHTGREY, TFT_LIGHTGREY, false);
       //  [1500-4100] Green

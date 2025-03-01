@@ -1,10 +1,12 @@
 #ifndef hsi_h
 #define hsi_h
 
+#include "Arduino.h"
+
 #include <TFT_eSPI.h>
 #include "hsi_heading_background.h"
 
-#define TFT_CS_HSI 15
+#define TFT_CS_HSI 13
 // HSI 19
 // engine gauges R: 22, L: 21
 
@@ -76,27 +78,29 @@ void initScreen_Hsi() {
   sprHsiBearing1.setColorDepth(8);
   sprHsiBearing1.createSprite(3, 20);
   sprHsiBearing1.setSwapBytes(true);
-  sprHsiBearing1.fillSprite(TFT_SILVER);
+  sprHsiBearing1.fillSprite(TFT_DARKGREY);
   sprHsiBearing1.setPivot(2, 120);
 
   sprHsiBearing2.setColorDepth(8);
   sprHsiBearing2.createSprite(15, 8);
   sprHsiBearing2.setSwapBytes(true);
-  sprHsiBearing2.fillSprite(TFT_SILVER);
+  sprHsiBearing2.fillSprite(TFT_DARKGREY);
   sprHsiBearing2.setPivot(8, 110);
 
   sprHsiCourseArrow.setColorDepth(8);
   sprHsiCourseArrow.createSprite(5, 150);
   sprHsiCourseArrow.setSwapBytes(true);
   sprHsiCourseArrow.setPivot(2, 79);
-  sprHsiCourseArrow.drawWedgeLine(2, 0, 2, 20, 1, 5, TFT_SILVER);
-  sprHsiCourseArrow.drawWedgeLine(2, 139, 2, 150, 5, 5, TFT_SILVER);
+  sprHsiCourseArrow.drawWedgeLine(2, 0, 2, 20, 1, 5, TFT_DARKGREY);
+  sprHsiCourseArrow.drawWedgeLine(2, 139, 2, 150, 5, 5, TFT_DARKGREY);
 
   sprHsiDeviation.setColorDepth(8);
   sprHsiDeviation.createSprite(5, 100);
   sprHsiDeviation.setSwapBytes(true);
   // sprHsiDeviation.setPivot(2, 79);
-  sprHsiDeviation.fillSprite(TFT_SILVER);  
+  sprHsiDeviation.fillSprite(TFT_DARKGREY);  
+
+  digitalWrite(TFT_CS_HSI, HIGH);
 }
 
 
@@ -105,7 +109,11 @@ void drawPlane() {
   sprHsi.fillRect(100, 119, 40, 4, TFT_DARKGREY); // V line
   sprHsi.fillRect(110, 146, 20, 4, TFT_DARKGREY); // V tail
 
-  // sprHsi.drawPixel(120, 120, TFT_WHITE);
+  // Repère NSEW
+  sprHsi.drawCircle(120, 0, 3, TFT_LIGHTGREY);
+  sprHsi.drawCircle(120, 239, 3, TFT_LIGHTGREY);
+  sprHsi.drawCircle(239, 120, 3, TFT_LIGHTGREY);
+  sprHsi.drawCircle(0, 120, 3, TFT_LIGHTGREY);
 }
 
 void drawHeading(int angle) {
