@@ -10,6 +10,7 @@
 // HSI 19
 // engine gauges R: 22, L: 21
 
+
 #define HSI_RADIUS 100
 #define HSI_TEXT_OFFSET 10
 
@@ -54,6 +55,8 @@ int hsiCurrentDeviation = 0; // [55-55]
 bool hsiCurrentBearingFlag = true;
 bool hsiCurrentPowerOff = true;
 int hsiRangeCounter = 0; // [55-55]
+
+bool hsiCurrentVisibility = false;
 
 void setup1_Hsi() {
   pinMode(TFT_CS_HSI, OUTPUT);
@@ -140,6 +143,9 @@ void drawCourseArrow(int angle) {
 }
 
 void drawHsi() {
+  // Toggle display is off
+  if (!hsiCurrentVisibility) return;
+
   // draw each xx millis
   hsiCurrentTimestamp = millis();
   // 10fps => 100ms
@@ -163,6 +169,17 @@ void drawHsi() {
   sprHsi.pushSprite(0, 0);
 
   digitalWrite(TFT_CS_HSI, HIGH);
+}
+
+void toggleHsi() {
+  hsiCurrentVisibility = !hsiCurrentVisibility;
+  if (hsiCurrentVisibility) {
+    drawHsi();
+  } else {
+    digitalWrite(TFT_CS_HSI, LOW);
+    tft.fillScreen(TFT_BLACK);
+    digitalWrite(TFT_CS_HSI, HIGH);
+  }
 }
 
 #endif

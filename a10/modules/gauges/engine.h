@@ -48,7 +48,12 @@ class Engine
       digitalWrite(pin, HIGH);
     };
 
+    bool isDrawing = false;
     void drawScreen() {
+      if (!currentVisibility) return;
+      if (isDrawing) return;
+      
+      isDrawing = true;
       // digitalWrite(pin, HIGH);
       digitalWrite(pin, LOW);
 
@@ -66,6 +71,7 @@ class Engine
       digitalWrite(pin, HIGH);
 
       updateEngine();
+      isDrawing = false;
     };
 
     // Change gauge display
@@ -75,8 +81,10 @@ class Engine
       // 3: Interstage Turbine Temp (ITT) (°C*100)
       // 4: Fuel Flow (Pounds Per Hour)
     void changeDisplay(int d) {
-      currentDisplay = d;
-      drawScreen();
+      if (d >= 0 && d <= 4) {
+        currentDisplay = d;
+        drawScreen();
+      }
     };
 
     void drawGaugesList() {
@@ -84,31 +92,31 @@ class Engine
 
       // Remove selected indicator
       tft->setTextColor(TFT_BLACK);
-      tft->drawString(">", 140, 80, 2);
-      tft->drawString(">", 140, 100, 2);
-      tft->drawString(">", 140, 120, 2);
-      tft->drawString(">", 140, 140, 2);
-      tft->drawString(">", 140, 160, 2);
+      tft->drawString("->", 125, 80, 2);
+      tft->drawString("->", 125, 100, 2);
+      tft->drawString("->", 125, 120, 2);
+      tft->drawString("->", 125, 140, 2);
+      tft->drawString("->", 125, 160, 2);
 
       // Selected indicator
       tft->setTextColor(oilPressureColor);
-      if (currentDisplay == 0) tft->drawString(">", 140, 80, 2);
+      if (currentDisplay == 0) tft->drawString("->", 125, 80, 2);
       tft->drawString("OIL PRESS", 150, 80, 2);
 
       tft->setTextColor(coreSpeedColor);
-      if (currentDisplay == 1) tft->drawString(">", 140, 100, 2);
+      if (currentDisplay == 1) tft->drawString("->", 125, 100, 2);
       tft->drawString("CORE % RPM", 150, 100, 2);
 
       tft->setTextColor(fanSpeedColor);
-      if (currentDisplay == 2) tft->drawString(">", 140, 120, 2);
+      if (currentDisplay == 2) tft->drawString("->", 125, 120, 2);
       tft->drawString("FAN % RPM", 150, 120, 2);
 
       tft->setTextColor(ittColor);
-      if (currentDisplay == 3) tft->drawString(">", 140, 140, 2);
+      if (currentDisplay == 3) tft->drawString("->", 125, 140, 2);
       tft->drawString("ITT TEMP", 150, 140, 2);
 
       tft->setTextColor(fuelFlowColor);
-      if (currentDisplay == 4) tft->drawString(">", 140, 160, 2);
+      if (currentDisplay == 4) tft->drawString("->", 125, 160, 2);
       tft->drawString("FUEL FLOW", 150, 160, 2);
 
       tft->setTextColor(TFT_WHITE, TFT_BLACK);
@@ -122,12 +130,11 @@ class Engine
     void drawHydPress() {
       // Hys Press
       if (hydPressure < 2800) tft->setTextColor(TFT_LIGHTGREY, TFT_RED);
-      else if (hydPressure >= 2800 && hydPressure <= 3450) tft->setTextColor(TFT_LIGHTGREY, TFT_DARKGREEN);
+      else if (hydPressure >= 2800 && hydPressure <= 3500) tft->setTextColor(TFT_DARKGREEN, TFT_BLACK);
       else tft->setTextColor(TFT_LIGHTGREY, TFT_ORANGE);
       
-      tft->setTextSize(2);
-
-      tft->drawString(" HYD ", 115, 205, 2);
+      tft->setTextSize(1);
+      tft->drawString(" HYD ", 115, 225, 2);
       
       tft->setTextColor(TFT_WHITE, TFT_BLACK);
       tft->setTextSize(1);
@@ -146,6 +153,8 @@ class Engine
     }
 
     void updateEngine(int biosValue) {
+      if (!currentVisibility) return;
+
       // draw each xx millis
       currentTimestamp = millis();
       // 10fps => 100ms
@@ -225,8 +234,8 @@ class Engine
       currentOilPressureBiosValue = biosValue;
       oilPressure = map(biosValue, 0, 65535, 0, ENGINE_MAX_OIL_PRESSURE);
 
-      if (oilPressure < 30) oilPressureColor = TFT_LIGHTGREY;
-      else if (oilPressure >= 30 && oilPressure < 40) oilPressureColor = TFT_RED;
+      if (oilPressure < 40) oilPressureColor = TFT_RED;
+      // else if (oilPressure >= 30 && oilPressure < 40) oilPressureColor = TFT_RED;
       else if (oilPressure >= 40 && oilPressure < 55) oilPressureColor = TFT_YELLOW;
       else if (oilPressure >= 55 && oilPressure <= 95) oilPressureColor = TFT_DARKGREEN;
       // else if (oilPressure > 85 && oilPressure <= 95) oilPressureColor = TFT_ORANGE;
@@ -460,6 +469,16 @@ class Engine
         TFT_ORANGE, TFT_ORANGE, false);
     };
 
+    void toggleDisplay() {
+      currentVisibility = !currentVisibility;
+      if (currentVisibility) {
+        drawScreen();
+      } else {
+        digitalWrite(pin, LOW);
+        tft->fillScreen(TFT_BLACK);
+        digitalWrite(pin, HIGH);
+      }
+    };
   private:
     TFT_eSPI* tft;
     TFT_eSprite* spr;
@@ -483,6 +502,7 @@ class Engine
     unsigned int currentFanSpeedBiosValue = 0;
     unsigned int currentITTBiosValue = 0;
     unsigned int currentFuelFlowBiosValue = 0;
+    bool currentVisibility = false;
 };
 
 #endif

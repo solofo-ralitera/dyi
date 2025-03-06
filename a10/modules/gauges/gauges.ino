@@ -3,6 +3,9 @@
 #define DCSBIOS_DISABLE_SERVO
 #include "DcsBios.h"
 
+#include "PushButton.h"
+#include "KnobJoyEsp32.h"
+
 #include <math.h>
 
 // Load TFT driver library
@@ -22,6 +25,10 @@ Engine engineL(&tft, &sprEngineL, &sprEngineValueL, 14);
 bool updateHsi = false;
 bool updateEngineR = false;
 bool updateEngineL = false;
+
+void sendDcsCommand(const char* msg, const char* args) {
+  while(!DcsBios::tryToSendDcsBiosMessage(msg, args));
+}
 
 DcsBios::IntegerBuffer hsiHdgBuffer(A_10C_HSI_HDG, [](unsigned int newValue) {
   hsiCurrentAngleHeading = map(newValue, 65535, 0, 359, 1);
@@ -45,14 +52,14 @@ float hsiCourse1 = 0;
 float hsiCourse10 = 0;
 // Course unité
 DcsBios::IntegerBuffer hsiCcBBuffer(A_10C_HSI_CC_B, [](unsigned int newValue) {
-  hsiCourse1 = map(newValue, 65535, 0, 99, 0) / 10;
+  hsiCourse1 = map(newValue, 65535, 0, 100, 0) / 10;
   hsiCurrentAngleCourseArrow = hsiCourse1 + (hsiCourse10 * 10);
   updateHsi = true;
   // drawHsi();
 });
 // Course dizaine
 DcsBios::IntegerBuffer hsiCcABuffer(A_10C_HSI_CC_A, [](unsigned int newValue) {
-  hsiCourse10 = map(newValue, 65535, 0, 359, 0) / 10;
+  hsiCourse10 = map(newValue, 65535, 0, 360, 0) / 10;
   hsiCurrentAngleCourseArrow = hsiCourse1 + (hsiCourse10 * 10);
   updateHsi = true;
   // drawHsi();
@@ -120,7 +127,28 @@ DcsBios::IntegerBuffer rHydPressBuffer(A_10C_R_HYD_PRESS, [](unsigned int newVal
   engineR.setHydPressure(newValue);
 });
 
+// Led gun & steering
+DcsBios::IntegerBuffer gunReadyBuffer(A_10C_GUN_READY, [](unsigned int newValue) {
+    digitalWrite(0, newValue ? HIGH : LOW);
+});
+DcsBios::IntegerBuffer nosewheelSteeringBuffer(A_10C_NOSEWHEEL_STEERING, [](unsigned int newValue) {
+    digitalWrite(5, newValue ? HIGH : LOW);
+});
+
+int currentDisplay = 2;
+
 void setup() {
+  // Hsi btn
+  pinMode(26, INPUT_PULLUP);
+  // Engine gauge btn
+  pinMode(32, INPUT_PULLUP);
+
+  // Gun ready & steering engaged
+  pinMode(0, OUTPUT);
+  pinMode(5, OUTPUT);
+  digitalWrite(0, LOW);
+  digitalWrite(5, LOW);
+
   setup1_Hsi();
   engineR.init();
   engineL.init();
@@ -140,13 +168,10 @@ void setup() {
   DcsBios::setup();
 
   drawHsi();
-  engineL.changeDisplay(2);
-  engineR.changeDisplay(2);
-
+  engineL.changeDisplay(currentDisplay);
+  engineR.changeDisplay(currentDisplay);
 }
 
-// int current = 0;
-// int currentDisplay = 0;
 void loop() {
   DcsBios::loop();
 
@@ -154,31 +179,43 @@ void loop() {
     drawHsi();
     updateHsi = false;
   }
-  /*
-  engineL.setOilPressure(current);
-  engineR.setOilPressure(current);
 
-  engineL.setCoreSpeed(current);
-  engineR.setCoreSpeed(current);
-
-  engineL.setFanSpeed(current);
-  engineR.setFanSpeed(current);
-
-  engineL.setItt(current);
-  engineR.setItt(current);
-
-  engineL.setFuelFlow(current);
-  engineR.setFuelFlow(current);
-
-  if (current > 65535) {
-    current = 0;
+  static KnobJoyEsp32 engineCycle(35, 34);
+  engineCycle.runCallBack([]() {
     currentDisplay++;
-    if (currentDisplay > 4) currentDisplay = 0;
+    if (currentDisplay >= 4) currentDisplay = 4;
+    if (currentDisplay <= 0) currentDisplay = 0;
+
     engineL.changeDisplay(currentDisplay);
     engineR.changeDisplay(currentDisplay);
-  }
-  current++;
+    delay(50);
+  }, []() {
+    currentDisplay--;
+    if (currentDisplay >= 4) currentDisplay = 4;
+    if (currentDisplay <= 0) currentDisplay = 0;
 
-  // delay(1);
-  */
+    engineL.changeDisplay(currentDisplay);
+    engineR.changeDisplay(currentDisplay);
+    delay(50);
+  });
+
+  static KnobJoyEsp32 hsiCourse(33, 25);
+  hsiCourse.runCallBack([]() {
+    sendDcsCommand("HSI_CRS_KNOB", "-1900");
+     delay(50);
+ }, []() {
+    sendDcsCommand("HSI_CRS_KNOB", "+2100");
+    delay(50);
+  });
+
+  static PushButton hsiBtn;
+  hsiBtn.runCallBack(digitalRead(26) ? 0 : 1, []() {
+    toggleHsi();
+  });
+
+  static PushButton engineGaugeBtn;
+  engineGaugeBtn.runCallBack(digitalRead(32) ? 0 : 1, []() {
+    engineR.toggleDisplay();
+    engineL.toggleDisplay();
+  });
 }
