@@ -128,12 +128,14 @@ DcsBios::IntegerBuffer rHydPressBuffer(A_10C_R_HYD_PRESS, [](unsigned int newVal
 });
 
 // Led gun & steering
-DcsBios::IntegerBuffer gunReadyBuffer(A_10C_GUN_READY, [](unsigned int newValue) {
+DcsBios::LED gunReady(0x1026, 0x8000, 0);
+/* DcsBios::IntegerBuffer gunReadyBuffer(A_10C_GUN_READY, [](unsigned int newValue) {
     digitalWrite(0, newValue ? HIGH : LOW);
-});
-DcsBios::IntegerBuffer nosewheelSteeringBuffer(A_10C_NOSEWHEEL_STEERING, [](unsigned int newValue) {
+}); */
+DcsBios::LED nosewheelSteering(0x10da,0x0001, 5);
+/* DcsBios::IntegerBuffer nosewheelSteeringBuffer(A_10C_NOSEWHEEL_STEERING, [](unsigned int newValue) {
     digitalWrite(5, newValue ? HIGH : LOW);
-});
+}); */
 
 int currentDisplay = 2;
 

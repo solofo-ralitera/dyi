@@ -37,6 +37,12 @@ void checklistsCommands(int pbCode, int checkListPage) {
     radios.displayCheckListsMenuBtn();
   });
 
+  // switch between A-10C / A-10C II
+  static PushButton a10VersionSwitch;
+  a10VersionSwitch.runCallBack(pbCode == PB_XMTRCV ? 0 : 1, []() {
+    radios.switchA10Version();
+  });
+
   static PushButton pbFrequenctSelector1;
   pbFrequenctSelector1.runCallBack(pbCode == PB_FREQUENCY_SELECTOR_1 ? 0 : 1, []() {
     radios.displayCheckListsPage(1);

@@ -59,7 +59,10 @@ void runElectricalPowerPanel() {
 
   // 45 Emer FLOOD
   // bitRead(PINL, PINL4);
-  // Do nothing, may be physical led?
+  static PushButton emerFlood;
+  emerFlood.runCallBack(bitRead(PINL, PINL4),  []() {
+    radios.sendDcsCommand("SEAT_ARM", "TOGGLE");
+  });
 
   // 46 Inverter STBY
   static PushButton inverterSTBY;

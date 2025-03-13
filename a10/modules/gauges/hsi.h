@@ -167,6 +167,7 @@ void drawHsi() {
   drawPlane();
 
   sprHsi.pushSprite(0, 0);
+  // sprHsi.pushRotated(-5, TFT_BLACK);
 
   digitalWrite(TFT_CS_HSI, HIGH);
 }
