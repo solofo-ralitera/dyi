@@ -23,3 +23,6 @@ Le module est composé des éléments suivants :
 - **Frein** : La pédale de frein agit comme un **frein de roue** lorsque l'avion est au sol.
 
 
+## Brochage du connecteur
+
+![plot](./g27-db9.png)
